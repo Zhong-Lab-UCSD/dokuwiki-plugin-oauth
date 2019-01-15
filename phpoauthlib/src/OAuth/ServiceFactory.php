@@ -88,7 +88,7 @@ class ServiceFactory
     }
 
     /**
-     * Builds and returns oauth services
+     * Builds and returns oauthpdo services
      *
      * It will first try to build an OAuth2 service and if none found it will try to build an OAuth1 service
      *

@@ -63,7 +63,7 @@ class VkontakteTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://oauth.vk.com/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://oauthpdo.vk.com/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
     }
 
     /**
@@ -78,7 +78,7 @@ class VkontakteTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://oauth.vk.com/access_token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://oauthpdo.vk.com/access_token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
     }
 
     /**

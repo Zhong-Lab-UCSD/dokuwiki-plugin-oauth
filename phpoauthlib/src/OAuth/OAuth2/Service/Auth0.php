@@ -26,7 +26,7 @@ class Auth0 extends AbstractService
     ) {
         parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri);
 
-        $hlp = plugin_load('helper', 'oauth');
+        $hlp = plugin_load('helper', 'oauthpdo');
         $this->domain = $hlp->getConf('auth0-domain');
 
         if (null === $baseApiUri) {
@@ -52,7 +52,7 @@ class Auth0 extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri("https://{$this->domain}/oauth/token/");
+        return new Uri("https://{$this->domain}/oauthpdo/token/");
     }
 
     /**

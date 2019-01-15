@@ -1,6 +1,6 @@
 <?php
 /**
- * DokuWiki Plugin oauth (Helper Component)
+ * DokuWiki Plugin oauthpdo (Helper Component)
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  Andreas Gohr <andi@splitbrain.org>
@@ -9,7 +9,7 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-class helper_plugin_oauth extends DokuWiki_Plugin {
+class helper_plugin_oauthpdo extends DokuWiki_Plugin {
 
     /**
      * Load the needed libraries and initialize the named oAuth service

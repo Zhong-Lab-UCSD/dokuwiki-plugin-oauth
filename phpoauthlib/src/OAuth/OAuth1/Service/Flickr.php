@@ -29,17 +29,17 @@ class Flickr extends AbstractService
     
     public function getRequestTokenEndpoint()
     {
-        return new Uri('https://www.flickr.com/services/oauth/request_token');
+        return new Uri('https://www.flickr.com/services/oauthpdo/request_token');
     }
     
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://www.flickr.com/services/oauth/authorize');
+        return new Uri('https://www.flickr.com/services/oauthpdo/authorize');
     }
     
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://www.flickr.com/services/oauth/access_token');
+        return new Uri('https://www.flickr.com/services/oauthpdo/access_token');
     }
     
     protected function parseRequestTokenResponse($responseBody)
@@ -47,7 +47,7 @@ class Flickr extends AbstractService
         parse_str($responseBody, $data);
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
-        } elseif (!isset($data['oauth_callback_confirmed']) || $data['oauth_callback_confirmed'] != 'true') {
+        } elseif (!isset($data['oauthpdo_callback_confirmed']) || $data['oauthpdo_callback_confirmed'] != 'true') {
             throw new TokenResponseException('Error in retrieving token.');
         }
         return $this->parseAccessTokenResponse($responseBody);
@@ -63,12 +63,12 @@ class Flickr extends AbstractService
         }
         
         $token = new StdOAuth1Token();
-        $token->setRequestToken($data['oauth_token']);
-        $token->setRequestTokenSecret($data['oauth_token_secret']);
-        $token->setAccessToken($data['oauth_token']);
-        $token->setAccessTokenSecret($data['oauth_token_secret']);
+        $token->setRequestToken($data['oauthpdo_token']);
+        $token->setRequestTokenSecret($data['oauthpdo_token_secret']);
+        $token->setAccessToken($data['oauthpdo_token']);
+        $token->setAccessTokenSecret($data['oauthpdo_token_secret']);
         $token->setEndOfLife(StdOAuth1Token::EOL_NEVER_EXPIRES);
-        unset($data['oauth_token'], $data['oauth_token_secret']);
+        unset($data['oauthpdo_token'], $data['oauthpdo_token_secret']);
         $token->setExtraParams($data);
         
         return $token;

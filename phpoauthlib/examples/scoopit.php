@@ -30,13 +30,13 @@ $credentials = new Credentials(
 // Instantiate the ScoopIt service using the credentials, http client and storage mechanism for the token
 $scoopItService = $serviceFactory->createService('ScoopIt', $credentials, $storage);
 
-if (!empty($_GET['oauth_token'])) {
+if (!empty($_GET['oauthpdo_token'])) {
     $token = $storage->retrieveAccessToken('ScoopIt');
 
     // This was a callback request from ScoopIt, get the token
     $scoopItService->requestAccessToken(
-        $_GET['oauth_token'],
-        $_GET['oauth_verifier'],
+        $_GET['oauthpdo_token'],
+        $_GET['oauthpdo_verifier'],
         $token->getRequestTokenSecret()
     );
 
@@ -49,7 +49,7 @@ if (!empty($_GET['oauth_token'])) {
     // extra request needed for oauth1 to request a request token :-)
     $token = $scoopItService->requestRequestToken();
 
-    $url = $scoopItService->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()));
+    $url = $scoopItService->getAuthorizationUri(array('oauthpdo_token' => $token->getRequestToken()));
     header('Location: ' . $url);
 } else {
     $url = $currentUri->getRelativeUri() . '?go=go';

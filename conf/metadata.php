@@ -1,19 +1,19 @@
 <?php
 /**
- * Options for the oauth plugin
+ * Options for the oauthpdo plugin
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  */
 
-class setting_plugin_oauth extends setting {
+class setting_plugin_oauthpdo extends setting {
 
     function update($input) {
         return true;
     }
 
     public function html(&$plugin, $echo = false) {
-        /** @var helper_plugin_oauth $hlp */
-        $hlp = plugin_load('helper', 'oauth');
+        /** @var helper_plugin_oauthpdo $hlp */
+        $hlp = plugin_load('helper', 'oauthpdo');
 
         $key   = htmlspecialchars($this->_key);
         $value = '<code>'.$hlp->redirectURI().'</code>';
@@ -25,7 +25,7 @@ class setting_plugin_oauth extends setting {
 
 }
 
-$meta['info']                = array('plugin_oauth');
+$meta['info']                = array('plugin_oauthpdo');
 $meta['auth0-key']           = array('string');
 $meta['auth0-secret']        = array('string');
 $meta['auth0-domain']        = array('string');
@@ -61,3 +61,29 @@ $meta['singleService']       = array('multichoice',
                                          'Yahoo',
                                          'Doorkeeper',
                                          'Keycloak'));
+
+/**
+ * Options for the authpdo plugin
+ *
+ * @author Andreas Gohr <andi@splitbrain.org>
+ */
+$meta['debug']              = array('onoff', '_caution' => 'security');
+$meta['dsn']                = array('string', '_caution' => 'danger');
+$meta['user']               = array('string', '_caution' => 'danger');
+$meta['pass']               = array('password', '_caution' => 'danger', '_code' => 'base64');
+$meta['select-user']        = array('', '_caution' => 'danger');
+$meta['select-user-from-email-with-service']        = array('', '_caution' => 'danger');
+$meta['select-user-from-email']        = array('', '_caution' => 'danger');
+$meta['check-pass']         = array('', '_caution' => 'danger');
+$meta['select-user-groups'] = array('', '_caution' => 'danger');
+$meta['select-groups']      = array('', '_caution' => 'danger');
+$meta['insert-user']        = array('', '_caution' => 'danger');
+$meta['delete-user']        = array('', '_caution' => 'danger');
+$meta['list-users']         = array('', '_caution' => 'danger');
+$meta['count-users']        = array('', '_caution' => 'danger');
+$meta['update-user-info']   = array('', '_caution' => 'danger');
+$meta['update-user-login']  = array('', '_caution' => 'danger');
+$meta['update-user-pass']   = array('', '_caution' => 'danger');
+$meta['insert-group']       = array('', '_caution' => 'danger');
+$meta['join-group']         = array('', '_caution' => 'danger');
+$meta['leave-group']        = array('', '_caution' => 'danger');

@@ -20,7 +20,7 @@ class oAuthStorage implements TokenStorageInterface {
      * @return string
      */
     protected function getServiceFile($service) {
-        return getCacheName($service, '.oauth');
+        return getCacheName($service, '.oauthpdo');
     }
 
     /**

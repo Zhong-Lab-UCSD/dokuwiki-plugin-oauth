@@ -13,7 +13,7 @@ use OAuth\Common\Http\Uri\UriInterface;
 class GitHub extends AbstractService
 {
     /**
-     * Defined scopes, see http://developer.github.com/v3/oauth/ for definitions.
+     * Defined scopes, see http://developer.github.com/v3/oauthpdo/ for definitions.
      */
 
     /**
@@ -106,7 +106,7 @@ class GitHub extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://github.com/login/oauth/authorize');
+        return new Uri('https://github.com/login/oauthpdo/authorize');
     }
 
     /**
@@ -114,7 +114,7 @@ class GitHub extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://github.com/login/oauth/access_token');
+        return new Uri('https://github.com/login/oauthpdo/access_token');
     }
 
     /**

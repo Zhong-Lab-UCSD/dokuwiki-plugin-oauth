@@ -98,7 +98,7 @@ class Mailchimp extends AbstractService
     protected function setBaseApiUri(StdOAuth2Token $token)
     {
         // Make request uri.
-        $endpoint = 'https://login.mailchimp.com/oauth2/metadata?oauth_token='. $token->getAccessToken();
+        $endpoint = 'https://login.mailchimp.com/oauth2/metadata?oauthpdo_token='. $token->getAccessToken();
 
         // Grab meta data about the token.
         $response = $this->httpClient->retrieveResponse(new Uri($endpoint), array(), array(), 'GET');

@@ -66,7 +66,7 @@ class BitBucketTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://bitbucket.org/!api/1.0/oauth/request_token',
+            'https://bitbucket.org/!api/1.0/oauthpdo/request_token',
             $service->getRequestTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -85,7 +85,7 @@ class BitBucketTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://bitbucket.org/!api/1.0/oauth/authenticate',
+            'https://bitbucket.org/!api/1.0/oauthpdo/authenticate',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
@@ -104,7 +104,7 @@ class BitBucketTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://bitbucket.org/!api/1.0/oauth/access_token',
+            'https://bitbucket.org/!api/1.0/oauthpdo/access_token',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -184,7 +184,7 @@ class BitBucketTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauth_callback_confirmed=false'
+            'oauthpdo_callback_confirmed=false'
         ));
 
         $service = new BitBucket(
@@ -209,7 +209,7 @@ class BitBucketTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauth_callback_confirmed=true&oauth_token=foo&oauth_token_secret=bar'
+            'oauthpdo_callback_confirmed=true&oauthpdo_token=foo&oauthpdo_token_secret=bar'
         ));
 
         $service = new BitBucket(
@@ -258,7 +258,7 @@ class BitBucketTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauth_token=foo&oauth_token_secret=bar'
+            'oauthpdo_token=foo&oauthpdo_token_secret=bar'
         ));
 
         $token = $this->getMock('\\OAuth\\OAuth1\\Token\\TokenInterface');

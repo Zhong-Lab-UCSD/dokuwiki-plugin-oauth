@@ -1,6 +1,6 @@
 <?php
 /**
- * French language file for oauth plugin
+ * French language file for oauthpdo plugin
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  * @author Cyrille Giquello <cyrille@giquello.fr>

@@ -63,7 +63,7 @@ class BitlyTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://bitly.com/oauth/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://bitly.com/oauthpdo/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
     }
 
     /**
@@ -78,7 +78,7 @@ class BitlyTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://api-ssl.bitly.com/oauth/access_token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://api-ssl.bitly.com/oauthpdo/access_token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
     }
 
     /**

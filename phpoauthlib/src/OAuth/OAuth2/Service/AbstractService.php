@@ -17,8 +17,8 @@ use OAuth\Common\Token\Exception\ExpiredTokenException;
 
 abstract class AbstractService extends BaseAbstractService implements ServiceInterface
 {
-    /** @const OAUTH_VERSION */
-    const OAUTH_VERSION = 2;
+    /** @const oauthpdo_VERSION */
+    const oauthpdo_VERSION = 2;
 
     /** @var array */
     protected $scopes;

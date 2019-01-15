@@ -1,7 +1,7 @@
-base   oauth
+base   oauthpdo
 author Andreas Gohr
 email  dokuwiki@cosmocode.de
 date   2016-10-25
-name   oauth plugin
+name   oauthpdo plugin
 desc   Generic oAuth plugin to login via various services
-url    http://www.dokuwiki.org/plugin:oauth
+url    http://www.dokuwiki.org/plugin:oauthpdo

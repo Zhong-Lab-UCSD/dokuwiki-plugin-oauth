@@ -33,8 +33,8 @@ class Session implements TokenStorageInterface
      */
     public function __construct(
         $startSession = true,
-        $sessionVariableName = 'lusitanian_oauth_token',
-        $stateVariableName = 'lusitanian_oauth_state'
+        $sessionVariableName = 'lusitanian_oauthpdo_token',
+        $stateVariableName = 'lusitanian_oauthpdo_state'
     ) {
         if ($startSession && !isset($_SESSION)) {
             session_start();

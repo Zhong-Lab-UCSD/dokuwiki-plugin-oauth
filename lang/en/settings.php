@@ -1,6 +1,6 @@
 <?php
 /**
- * english language file for oauth plugin
+ * english language file for oauthpdo plugin
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  */
@@ -33,3 +33,24 @@ $lang['doorkeeper-authurl']  = '(Example) The authorization endpoint URL of your
 $lang['doorkeeper-tokenurl'] = '(Example) The access token endpoint URL of your Doorkeeper setup.';
 $lang['singleService']            = 'Login with single oAuth service only (disables local logins!)';
 $lang['singleService_o_'] = 'Allow all services';
+
+$lang['debug']              = 'Print out detailed error messages. Should be disabled after setup.';
+$lang['dsn']                = 'The DSN to connect to the database.';
+$lang['user']               = 'The user for the above database connection (empty for sqlite)';
+$lang['pass']               = 'The password for the above database connection (empty for sqlite)';
+$lang['select-user']        = 'SQL Statement to select the data of a single user';
+$lang['select-user-from-email-with-service']        = 'SQL Statement to select the user name with email from a given service';
+$lang['select-user-from-email']        = 'SQL Statement to select the user name with email from any given service';
+$lang['select-user-groups'] = 'SQL Statement to select all groups of a single user';
+$lang['select-groups']      = 'SQL Statement to select all available groups';
+$lang['insert-user']        = 'SQL Statement to insert a new user into the database';
+$lang['delete-user']        = 'SQL Statement to remove a single user from the database';
+$lang['list-users']         = 'SQL Statement to list users matching a filter';
+$lang['count-users']        = 'SQL Statement to count users matching a filter';
+$lang['update-user-info']   = 'SQL Statement to update the full name and email address of a single user';
+$lang['update-user-login']  = 'SQL Statement to update the login name of a single user';
+$lang['update-user-pass']   = 'SQL Statement to update the password of a single user';
+$lang['insert-group']       = 'SQL Statement to insert a new group into the database';
+$lang['join-group']         = 'SQL Statement to add a user to an existing group';
+$lang['leave-group']        = 'SQL Statement to remove a user from a group';
+$lang['check-pass']         = 'SQL Statement to check the password for a user. Can be left empty if password info is fetched in select-user.';

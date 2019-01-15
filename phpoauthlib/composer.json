@@ -1,7 +1,7 @@
 {
-    "name": "lusitanian/oauth",
+    "name": "lusitanian/oauthpdo",
     "description": "PHP 5.3+ oAuth 1/2 Library",
-    "keywords": ["oauth", "authentication", "authorization", "security"],
+    "keywords": ["oauthpdo", "authentication", "authorization", "security"],
     "license": "MIT",
     "authors": [
         {

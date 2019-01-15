@@ -21,7 +21,7 @@ abstract class AbstractAdapter {
 
     /** @var \OAuth\Common\Service\AbstractService|\OAuth\OAuth2\Service\AbstractService|\OAuth\OAuth2\Service\AbstractService */
     public $oAuth = null;
-    /** @var \helper_plugin_oauth */
+    /** @var \helper_plugin_oauthpdo */
     protected $hlp = null;
     /** @var \OAuth\Plugin\oAuthStorage */
     protected $storage = null;
@@ -32,7 +32,7 @@ abstract class AbstractAdapter {
      * @param $url
      */
     public function __construct($url) {
-        $this->hlp = plugin_load('helper', 'oauth');
+        $this->hlp = plugin_load('helper', 'oauthpdo');
 
         $credentials = new Credentials(
             $this->hlp->getKey($this->getAdapterName()),
@@ -79,7 +79,7 @@ abstract class AbstractAdapter {
             // extra request needed for oauth1 to request a request token :-)
             $token = $this->oAuth->requestRequestToken();
 
-            $url = $this->oAuth->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()));
+            $url = $this->oAuth->getAuthorizationUri(array('oauthpdo_token' => $token->getRequestToken()));
         }
 
         send_redirect($url);
@@ -112,15 +112,15 @@ abstract class AbstractAdapter {
             }
         } else { /* oAuth1 handling */
 
-            if(!$INPUT->get->has('oauth_token')) return false;
+            if(!$INPUT->get->has('oauthpdo_token')) return false;
 
             $token = $this->storage->retrieveAccessToken($this->getServiceName());
 
             // This was a callback request from BitBucket, get the token
             try {
                 $this->oAuth->requestAccessToken(
-                    $INPUT->get->str('oauth_token'),
-                    $INPUT->get->str('oauth_verifier'),
+                    $INPUT->get->str('oauthpdo_token'),
+                    $INPUT->get->str('oauthpdo_verifier'),
                     $token->getRequestTokenSecret()
                 );
             } catch (TokenResponseException $e) {

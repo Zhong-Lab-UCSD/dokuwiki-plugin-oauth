@@ -15,7 +15,7 @@ class Reddit extends AbstractService
     /**
      * Defined scopes
      *
-     * @link http://www.reddit.com/dev/api/oauth
+     * @link http://www.reddit.com/dev/api/oauthpdo
      */
     // User scopes
     const SCOPE_EDIT                         = 'edit';
@@ -44,7 +44,7 @@ class Reddit extends AbstractService
         parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri, true);
 
         if (null === $baseApiUri) {
-            $this->baseApiUri = new Uri('https://oauth.reddit.com');
+            $this->baseApiUri = new Uri('https://oauthpdo.reddit.com');
         }
     }
 

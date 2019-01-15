@@ -40,7 +40,7 @@ class Instagram extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://api.instagram.com/oauth/authorize/');
+        return new Uri('https://api.instagram.com/oauthpdo/authorize/');
     }
 
     /**
@@ -48,7 +48,7 @@ class Instagram extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://api.instagram.com/oauth/access_token');
+        return new Uri('https://api.instagram.com/oauthpdo/access_token');
     }
 
     /**

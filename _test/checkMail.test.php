@@ -1,21 +1,21 @@
 <?php
 /**
- * General tests for the oauth plugin
+ * General tests for the oauthpdo plugin
  *
- * @group plugin_oauth
+ * @group plugin_oauthpdo
  * @group plugins
  */
-class checkMail_plugin_oauth_test extends DokuWikiTest {
+class checkMail_plugin_oauthpdo_test extends DokuWikiTest {
 
-    protected $pluginsEnabled = array('oauth');
+    protected $pluginsEnabled = array('oauthpdo');
 
     public function test_checkMail_twoDomains() {
 
         global $conf;
-        $conf['plugin']['oauth']['mailRestriction'] = '@foo.org,@example.com';
+        $conf['plugin']['oauthpdo']['mailRestriction'] = '@foo.org,@example.com';
 
-        /** @var helper_plugin_oauth $hlp */
-        $hlp     = plugin_load('helper', 'oauth');
+        /** @var helper_plugin_oauthpdo $hlp */
+        $hlp     = plugin_load('helper', 'oauthpdo');
 
         $testmail = "bar@foo.org";
         $this->assertTrue($hlp->checkMail($testmail),$testmail);
@@ -28,10 +28,10 @@ class checkMail_plugin_oauth_test extends DokuWikiTest {
     public function test_checkMail_oneDomains() {
 
         global $conf;
-        $conf['plugin']['oauth']['mailRestriction'] = '@foo.org';
+        $conf['plugin']['oauthpdo']['mailRestriction'] = '@foo.org';
 
-        /** @var helper_plugin_oauth $hlp */
-        $hlp     = plugin_load('helper', 'oauth');
+        /** @var helper_plugin_oauthpdo $hlp */
+        $hlp     = plugin_load('helper', 'oauthpdo');
 
         $testmail = "bar@foo.org";
         $this->assertTrue($hlp->checkMail($testmail),$testmail);

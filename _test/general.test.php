@@ -1,11 +1,11 @@
 <?php
 /**
- * General tests for the oauth plugin
+ * General tests for the oauthpdo plugin
  *
- * @group plugin_oauth
+ * @group plugin_oauthpdo
  * @group plugins
  */
-class general_plugin_oauth_test extends DokuWikiTest {
+class general_plugin_oauthpdo_test extends DokuWikiTest {
 
     /**
      * Simple test to make sure the plugin.info.txt is in correct format
@@ -24,7 +24,7 @@ class general_plugin_oauth_test extends DokuWikiTest {
         $this->assertArrayHasKey('desc', $info);
         $this->assertArrayHasKey('url', $info);
 
-        $this->assertEquals('oauth', $info['base']);
+        $this->assertEquals('oauthpdo', $info['base']);
         $this->assertRegExp('/^https?:\/\//', $info['url']);
         $this->assertTrue(mail_isvalid($info['email']));
         $this->assertRegExp('/^\d\d\d\d-\d\d-\d\d$/', $info['date']);

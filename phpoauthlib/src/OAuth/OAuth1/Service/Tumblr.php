@@ -32,7 +32,7 @@ class Tumblr extends AbstractService
      */
     public function getRequestTokenEndpoint()
     {
-        return new Uri('https://www.tumblr.com/oauth/request_token');
+        return new Uri('https://www.tumblr.com/oauthpdo/request_token');
     }
 
     /**
@@ -40,7 +40,7 @@ class Tumblr extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://www.tumblr.com/oauth/authorize');
+        return new Uri('https://www.tumblr.com/oauthpdo/authorize');
     }
 
     /**
@@ -48,7 +48,7 @@ class Tumblr extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://www.tumblr.com/oauth/access_token');
+        return new Uri('https://www.tumblr.com/oauthpdo/access_token');
     }
 
     /**
@@ -60,7 +60,7 @@ class Tumblr extends AbstractService
 
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
-        } elseif (!isset($data['oauth_callback_confirmed']) || $data['oauth_callback_confirmed'] !== 'true') {
+        } elseif (!isset($data['oauthpdo_callback_confirmed']) || $data['oauthpdo_callback_confirmed'] !== 'true') {
             throw new TokenResponseException('Error in retrieving token.');
         }
 
@@ -82,13 +82,13 @@ class Tumblr extends AbstractService
 
         $token = new StdOAuth1Token();
 
-        $token->setRequestToken($data['oauth_token']);
-        $token->setRequestTokenSecret($data['oauth_token_secret']);
-        $token->setAccessToken($data['oauth_token']);
-        $token->setAccessTokenSecret($data['oauth_token_secret']);
+        $token->setRequestToken($data['oauthpdo_token']);
+        $token->setRequestTokenSecret($data['oauthpdo_token_secret']);
+        $token->setAccessToken($data['oauthpdo_token']);
+        $token->setAccessTokenSecret($data['oauthpdo_token_secret']);
 
         $token->setEndOfLife(StdOAuth1Token::EOL_NEVER_EXPIRES);
-        unset($data['oauth_token'], $data['oauth_token_secret']);
+        unset($data['oauthpdo_token'], $data['oauthpdo_token_secret']);
         $token->setExtraParams($data);
 
         return $token;

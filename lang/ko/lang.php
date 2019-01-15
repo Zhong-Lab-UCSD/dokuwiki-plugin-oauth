@@ -1,6 +1,6 @@
 <?php
 /**
- * Korean language file for oauth plugin
+ * Korean language file for oauthpdo plugin
  *
  * @author SC Yoo <dryoo@Live.com>
  */

@@ -66,7 +66,7 @@ class FitBitTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://api.fitbit.com/oauth/request_token',
+            'https://api.fitbit.com/oauthpdo/request_token',
             $service->getRequestTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -85,7 +85,7 @@ class FitBitTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://www.fitbit.com/oauth/authorize',
+            'https://www.fitbit.com/oauthpdo/authorize',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
@@ -104,7 +104,7 @@ class FitBitTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://api.fitbit.com/oauth/access_token',
+            'https://api.fitbit.com/oauthpdo/access_token',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -184,7 +184,7 @@ class FitBitTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauth_callback_confirmed=false'
+            'oauthpdo_callback_confirmed=false'
         ));
 
         $service = new FitBit(
@@ -209,7 +209,7 @@ class FitBitTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauth_callback_confirmed=true&oauth_token=foo&oauth_token_secret=bar'
+            'oauthpdo_callback_confirmed=true&oauthpdo_token=foo&oauthpdo_token_secret=bar'
         ));
 
         $service = new FitBit(
@@ -258,7 +258,7 @@ class FitBitTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauth_token=foo&oauth_token_secret=bar'
+            'oauthpdo_token=foo&oauthpdo_token_secret=bar'
         ));
 
         $token = $this->getMock('\\OAuth\\OAuth1\\Token\\TokenInterface');

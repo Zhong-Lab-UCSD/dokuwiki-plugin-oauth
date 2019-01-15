@@ -1,6 +1,6 @@
 <?php
 /**
- * English language file for oauth plugin
+ * English language file for oauthpdo plugin
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  */
@@ -11,6 +11,6 @@ $lang['authnotenabled'] = 'The account associated with your email address has no
 $lang['wrongConfig'] = 'The oAuth plugin has been malconfigured. Defaulting to local authentication only. Please contact your wiki administrator.';
 $lang['loginButton'] = 'Login with ';//... i.e. Google (on SingleAuth)
 $lang['rejectedEMail'] = 'Invalid eMail-Account used. Only email accounts from the following domain(s) are allowed: %s!';
-$lang['eMailRestricted'] = '<p id="oauth_email_restricted">Only email accounts from the following domain(s) are allowed: %s</p>';
+$lang['eMailRestricted'] = '<p id="oauthpdo_email_restricted">Only email accounts from the following domain(s) are allowed: %s</p>';
 $lang['addUser not possible'] = 'Self-Registration is currently disabled or conf/users.auth.php is not writable. Please ask your DokuWiki administrator to create your account manually.';
-$lang['oauth login failed'] = 'Your (re)login has failed.';
+$lang['oauthpdo login failed'] = 'Your (re)login has failed.';

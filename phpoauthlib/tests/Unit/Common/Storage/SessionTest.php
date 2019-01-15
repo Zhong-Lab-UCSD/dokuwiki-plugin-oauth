@@ -55,7 +55,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     {
         session_start();
 
-        $_SESSION['lusitanian_oauth_token'] = array();
+        $_SESSION['lusitanian_oauthpdo_token'] = array();
 
         $storage = new Session();
 
@@ -88,7 +88,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     {
         $storage = new Session();
 
-        $_SESSION['lusitanian_oauth_token'] = 'foo';
+        $_SESSION['lusitanian_oauthpdo_token'] = 'foo';
 
         $this->assertInstanceOf(
             '\\OAuth\\Common\\Storage\\Session',
