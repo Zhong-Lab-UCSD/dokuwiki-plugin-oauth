@@ -31,7 +31,7 @@ class Bitly extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://bitly.com/oauthpdo/authorize');
+        return new Uri('https://bitly.com/oauth/authorize');
     }
 
     /**
@@ -39,7 +39,7 @@ class Bitly extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://api-ssl.bitly.com/oauthpdo/access_token');
+        return new Uri('https://api-ssl.bitly.com/oauth/access_token');
     }
 
     /**

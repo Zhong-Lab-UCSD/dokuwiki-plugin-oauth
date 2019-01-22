@@ -27,7 +27,7 @@ class Pocket extends AbstractService
     
     public function getRequestTokenEndpoint()
     {
-        return new Uri('https://getpocket.com/v3/oauthpdo/request');
+        return new Uri('https://getpocket.com/v3/oauth/request');
     }
     
     public function getAuthorizationEndpoint()
@@ -37,7 +37,7 @@ class Pocket extends AbstractService
     
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://getpocket.com/v3/oauthpdo/authorize');
+        return new Uri('https://getpocket.com/v3/oauth/authorize');
     }
     
     public function getAuthorizationUri(array $additionalParameters = array())

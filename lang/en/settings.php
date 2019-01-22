@@ -33,6 +33,7 @@ $lang['doorkeeper-authurl']  = '(Example) The authorization endpoint URL of your
 $lang['doorkeeper-tokenurl'] = '(Example) The access token endpoint URL of your Doorkeeper setup.';
 $lang['singleService']            = 'Login with single oAuth service only (disables local logins!)';
 $lang['singleService_o_'] = 'Allow all services';
+$lang['serviceOrder']            = 'The order of the services, separated by comma. Unlisted but supported services will be appended to the end of the list.';
 
 $lang['debug']              = 'Print out detailed error messages. Should be disabled after setup.';
 $lang['dsn']                = 'The DSN to connect to the database.';

@@ -63,7 +63,7 @@ class YammerTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://www.yammer.com/dialog/oauthpdo', $service->getAuthorizationEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://www.yammer.com/dialog/oauth', $service->getAuthorizationEndpoint()->getAbsoluteUri());
     }
 
     /**

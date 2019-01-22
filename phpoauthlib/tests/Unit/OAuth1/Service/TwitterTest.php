@@ -66,7 +66,7 @@ class TwitterTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://api.twitter.com/oauthpdo/request_token',
+            'https://api.twitter.com/oauth/request_token',
             $service->getRequestTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -133,7 +133,7 @@ class TwitterTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://api.twitter.com/oauthpdo/access_token',
+            'https://api.twitter.com/oauth/access_token',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -213,7 +213,7 @@ class TwitterTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauthpdo_callback_confirmed=false'
+            'oauth_callback_confirmed=false'
         ));
 
         $service = new Twitter(
@@ -238,7 +238,7 @@ class TwitterTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauthpdo_callback_confirmed=true&oauthpdo_token=foo&oauthpdo_token_secret=bar'
+            'oauth_callback_confirmed=true&oauth_token=foo&oauth_token_secret=bar'
         ));
 
         $service = new Twitter(
@@ -287,7 +287,7 @@ class TwitterTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauthpdo_token=foo&oauthpdo_token_secret=bar'
+            'oauth_token=foo&oauth_token_secret=bar'
         ));
 
         $token = $this->getMock('\\OAuth\\OAuth1\\Token\\TokenInterface');

@@ -64,7 +64,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://api.instagram.com/oauthpdo/authorize/',
+            'https://api.instagram.com/oauth/authorize/',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
@@ -82,7 +82,7 @@ class InstagramTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://api.instagram.com/oauthpdo/access_token',
+            'https://api.instagram.com/oauth/access_token',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }

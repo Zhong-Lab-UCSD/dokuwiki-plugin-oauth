@@ -33,13 +33,13 @@ $credentials = new Credentials(
 /** @var $etsyService Etsy */
 $etsyService = $serviceFactory->createService('Etsy', $credentials, $storage);
 
-if (!empty($_GET['oauthpdo_token'])) {
+if (!empty($_GET['oauth_token'])) {
     $token = $storage->retrieveAccessToken('Etsy');
 
     // This was a callback request from Etsy, get the token
     $etsyService->requestAccessToken(
-        $_GET['oauthpdo_token'],
-        $_GET['oauthpdo_verifier'],
+        $_GET['oauth_token'],
+        $_GET['oauth_verifier'],
         $token->getRequestTokenSecret()
     );
 

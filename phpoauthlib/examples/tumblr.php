@@ -35,13 +35,13 @@ $credentials = new Credentials(
 /** @var $tumblrService Tumblr */
 $tumblrService = $serviceFactory->createService('tumblr', $credentials, $storage);
 
-if (!empty($_GET['oauthpdo_token'])) {
+if (!empty($_GET['oauth_token'])) {
     $token = $storage->retrieveAccessToken('Tumblr');
 
     // This was a callback request from tumblr, get the token
     $tumblrService->requestAccessToken(
-        $_GET['oauthpdo_token'],
-        $_GET['oauthpdo_verifier'],
+        $_GET['oauth_token'],
+        $_GET['oauth_verifier'],
         $token->getRequestTokenSecret()
     );
 
@@ -54,7 +54,7 @@ if (!empty($_GET['oauthpdo_token'])) {
     // extra request needed for oauth1 to request a request token :-)
     $token = $tumblrService->requestRequestToken();
 
-    $url = $tumblrService->getAuthorizationUri(array('oauthpdo_token' => $token->getRequestToken()));
+    $url = $tumblrService->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()));
     header('Location: ' . $url);
 } else {
     $url = $currentUri->getRelativeUri() . '?go=go';

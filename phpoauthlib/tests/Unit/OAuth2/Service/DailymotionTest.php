@@ -63,7 +63,7 @@ class DailymotionTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://api.dailymotion.com/oauthpdo/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://api.dailymotion.com/oauth/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
     }
 
     /**
@@ -78,7 +78,7 @@ class DailymotionTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://api.dailymotion.com/oauthpdo/token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://api.dailymotion.com/oauth/token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
     }
 
     /**

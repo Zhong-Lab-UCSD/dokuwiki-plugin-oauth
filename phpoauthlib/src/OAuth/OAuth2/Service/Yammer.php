@@ -31,7 +31,7 @@ class Yammer extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://www.yammer.com/dialog/oauthpdo');
+        return new Uri('https://www.yammer.com/dialog/oauth');
     }
 
     /**

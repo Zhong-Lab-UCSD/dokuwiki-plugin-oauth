@@ -35,13 +35,13 @@ $credentials = new Credentials(
 /** @var $twitterService Twitter */
 $twitterService = $serviceFactory->createService('twitter', $credentials, $storage);
 
-if (!empty($_GET['oauthpdo_token'])) {
+if (!empty($_GET['oauth_token'])) {
     $token = $storage->retrieveAccessToken('Twitter');
 
     // This was a callback request from twitter, get the token
     $twitterService->requestAccessToken(
-        $_GET['oauthpdo_token'],
-        $_GET['oauthpdo_verifier'],
+        $_GET['oauth_token'],
+        $_GET['oauth_verifier'],
         $token->getRequestTokenSecret()
     );
 
@@ -54,7 +54,7 @@ if (!empty($_GET['oauthpdo_token'])) {
     // extra request needed for oauth1 to request a request token :-)
     $token = $twitterService->requestRequestToken();
 
-    $url = $twitterService->getAuthorizationUri(array('oauthpdo_token' => $token->getRequestToken()));
+    $url = $twitterService->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()));
     header('Location: ' . $url);
 } else {
     $url = $currentUri->getRelativeUri() . '?go=go';

@@ -14,13 +14,13 @@ use OAuth\Common\Http\Uri\UriInterface;
  * Heroku service.
  *
  * @author Thomas Welton <thomaswelton@me.com>
- * @link https://devcenter.heroku.com/articles/oauthpdo
+ * @link https://devcenter.heroku.com/articles/oauth
  */
 class Heroku extends AbstractService
 {
     /**
      * Defined scopes
-     * @link https://devcenter.heroku.com/articles/oauthpdo#scopes
+     * @link https://devcenter.heroku.com/articles/oauth#scopes
      */
     const SCOPE_GLOBAL          = 'global';
     const SCOPE_IDENTITY        = 'identity';
@@ -51,7 +51,7 @@ class Heroku extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://id.heroku.com/oauthpdo/authorize');
+        return new Uri('https://id.heroku.com/oauth/authorize');
     }
 
     /**
@@ -59,7 +59,7 @@ class Heroku extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://id.heroku.com/oauthpdo/token');
+        return new Uri('https://id.heroku.com/oauth/token');
     }
 
     /**

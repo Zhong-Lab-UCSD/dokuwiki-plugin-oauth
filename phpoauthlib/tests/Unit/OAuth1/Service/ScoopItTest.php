@@ -66,7 +66,7 @@ class ScoopItTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://www.scoop.it/oauthpdo/request',
+            'https://www.scoop.it/oauth/request',
             $service->getRequestTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -85,7 +85,7 @@ class ScoopItTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://www.scoop.it/oauthpdo/authorize',
+            'https://www.scoop.it/oauth/authorize',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
@@ -104,7 +104,7 @@ class ScoopItTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://www.scoop.it/oauthpdo/access',
+            'https://www.scoop.it/oauth/access',
             $service->getAccessTokenEndpoint()->getAbsoluteUri()
         );
     }
@@ -184,7 +184,7 @@ class ScoopItTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauthpdo_callback_confirmed=false'
+            'oauth_callback_confirmed=false'
         ));
 
         $service = new ScoopIt(
@@ -209,7 +209,7 @@ class ScoopItTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauthpdo_callback_confirmed=true&oauthpdo_token=foo&oauthpdo_token_secret=bar'
+            'oauth_callback_confirmed=true&oauth_token=foo&oauth_token_secret=bar'
         ));
 
         $service = new ScoopIt(
@@ -258,7 +258,7 @@ class ScoopItTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMock('\\OAuth\\Common\\Http\\Client\\ClientInterface');
         $client->expects($this->once())->method('retrieveResponse')->will($this->returnValue(
-            'oauthpdo_token=foo&oauthpdo_token_secret=bar'
+            'oauth_token=foo&oauth_token_secret=bar'
         ));
 
         $token = $this->getMock('\\OAuth\\OAuth1\\Token\\TokenInterface');

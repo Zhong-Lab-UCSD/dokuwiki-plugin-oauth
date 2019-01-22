@@ -1,54 +1,74 @@
-.plugin_oauthpdo_button(@color) {
-    border-top: 1px solid lighten(@color, 20%);
-    border-left: 1px solid lighten(@color, 20%);
-    border-right: 1px solid darken(@color, 20%);
-    border-bottom: 1px solid darken(@color, 20%);
-    background-color: @color;
+.plugin_oauthpdo_button(@colorBg, @colorFg) {
+    font-family: Roboto, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: @colorBg;
+    color: @colorFg;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    font-size: 18px;
+}
+
+.plugin_oauthpdo_button_logo(@colorBg, @colorBorder) {
+    display: block;
+    border-radius: 5px;
+    border: 2px solid @colorBorder;
+    background-color: @colorBg;
+    margin: 0 24px 0 0;
+    width: 52px;
+    height: 52px;
+    background-size: 27px;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 #dw__login {
     .plugin_oauthpdo {
-
         a {
-            padding: 10px 20px;
-            margin: 5px;
-            line-height: 50px;
-            background-position: 10px center;
-            background-repeat: no-repeat;
-            color: #fff;
+            margin: 10px;
             text-decoration: none;
-            font-weight: bold;
-            .plugin_oauthpdo_button(#999);
         }
 
         a.plugin_oauthpdo_Facebook {
-            .plugin_oauthpdo_button(#3b5998);
-            background-image: url(images/facebook.png);
-            padding-left: (20px+24px);
+            .plugin_oauthpdo_button(#4267B2, #FFFFFF);
+        }
+
+        a.plugin_oauthpdo_Facebook::before {
+            .plugin_oauthpdo_button_logo(none, none);
+            background-image: url('images/flogo-HexRBG-Wht-144.png');
+            content: '';
         }
 
         a.plugin_oauthpdo_Auth0 {
-            .plugin_oauthpdo_button(#d0d2d3);
             background-image: url(https://cdn.auth0.com/styleguide/1.0.0/img/badge.png);
             padding-left: (20px+24px);
             background-size: 22px 24px;
-            color:#5c666f;
+            .plugin_oauthpdo_button(#d0d2d3, #000000);
         }
 
         a.plugin_oauthpdo_Google {
-            .plugin_oauthpdo_button(#DC4A38);
-            background-image: url(images/google.png);
-            padding-left: (20px+24px);
+            .plugin_oauthpdo_button(#4285F4, #FFFFFF);
+        }
+
+        a.plugin_oauthpdo_Google::before {
+            .plugin_oauthpdo_button_logo(#FFFFFF, #4285F4);
+            background-image: url('images/Google.png');
+            content: '';
         }
 
         a.plugin_oauthpdo_Github {
-            .plugin_oauthpdo_button(#404041);
-            background-image: url(images/github.png);
-            padding-left: (20px+24px);
+            .plugin_oauthpdo_button(#666666, #FFFFFF);
+        }
+
+        a.plugin_oauthpdo_Github::before {
+            .plugin_oauthpdo_button_logo(none, none);
+            background-image: url('images/GitHub-Mark-Light-120px-plus.png');
+            content: '';
         }
 
         a.plugin_oauthpdo_Yahoo {
-            .plugin_oauthpdo_button(#7B0099);
+            .plugin_oauthpdo_button(#7B0099, #FFFFFF);
             background-image: url(images/yahoo.png);
             padding-left: (20px+24px);
         }

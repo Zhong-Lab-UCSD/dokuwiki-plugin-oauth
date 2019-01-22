@@ -159,7 +159,7 @@ class XingTest extends \PHPUnit_Framework_TestCase
         $this->client
             ->expects($this->once())
             ->method('retrieveResponse')
-            ->will($this->returnValue('oauthpdo_callback_confirmed=false'));
+            ->will($this->returnValue('oauth_callback_confirmed=false'));
 
         $this->setExpectedException('\\OAuth\\Common\\Http\\Exception\\TokenResponseException');
 
@@ -178,7 +178,7 @@ class XingTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('retrieveResponse')
             ->will($this->returnValue(
-                'oauthpdo_callback_confirmed=true&oauthpdo_token=foo&oauthpdo_token_secret=bar'
+                'oauth_callback_confirmed=true&oauth_token=foo&oauth_token_secret=bar'
             ));
 
         $this->assertInstanceOf(
@@ -221,7 +221,7 @@ class XingTest extends \PHPUnit_Framework_TestCase
         $this->client
             ->expects($this->once())
             ->method('retrieveResponse')
-            ->will($this->returnValue('oauthpdo_token=foo&oauthpdo_token_secret=bar'));
+            ->will($this->returnValue('oauth_token=foo&oauth_token_secret=bar'));
 
         $token = $this->getMock('\\OAuth\\OAuth1\\Token\\TokenInterface');
 

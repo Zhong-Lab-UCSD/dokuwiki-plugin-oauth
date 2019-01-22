@@ -14,8 +14,8 @@ use OAuth\Common\Service\AbstractService as BaseAbstractService;
 
 abstract class AbstractService extends BaseAbstractService implements ServiceInterface
 {
-    /** @const oauthpdo_VERSION */
-    const oauthpdo_VERSION = 1;
+    /** @const oauth_VERSION */
+    const oauth_VERSION = 1;
 
     /** @var SignatureInterface */
     protected $signature;
@@ -83,7 +83,7 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
         $this->signature->setTokenSecret($tokenSecret);
 
         $bodyParams = array(
-            'oauthpdo_verifier' => $verifier,
+            'oauth_verifier' => $verifier,
         );
 
         $authorizationHeader = array(
@@ -163,7 +163,7 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
     {
         $parameters = $this->getBasicAuthorizationHeaderInfo();
         $parameters = array_merge($parameters, $extraParameters);
-        $parameters['oauthpdo_signature'] = $this->signature->getSignature(
+        $parameters['oauth_signature'] = $this->signature->getSignature(
             $this->getRequestTokenEndpoint(),
             $parameters,
             'POST'
@@ -198,13 +198,13 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
     ) {
         $this->signature->setTokenSecret($token->getAccessTokenSecret());
         $parameters = $this->getBasicAuthorizationHeaderInfo();
-        if (isset($parameters['oauthpdo_callback'])) {
-            unset($parameters['oauthpdo_callback']);
+        if (isset($parameters['oauth_callback'])) {
+            unset($parameters['oauth_callback']);
         }
 
-        $parameters = array_merge($parameters, array('oauthpdo_token' => $token->getAccessToken()));
+        $parameters = array_merge($parameters, array('oauth_token' => $token->getAccessToken()));
         $parameters = (is_array($bodyParams)) ? array_merge($parameters, $bodyParams) : $parameters;
-        $parameters['oauthpdo_signature'] = $this->signature->getSignature($uri, $parameters, $method);
+        $parameters['oauth_signature'] = $this->signature->getSignature($uri, $parameters, $method);
 
         $authorizationHeader = 'OAuth ';
         $delimiter = '';
@@ -226,12 +226,12 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
     {
         $dateTime = new \DateTime();
         $headerParameters = array(
-            'oauthpdo_callback'         => $this->credentials->getCallbackUrl(),
-            'oauthpdo_consumer_key'     => $this->credentials->getConsumerId(),
-            'oauthpdo_nonce'            => $this->generateNonce(),
-            'oauthpdo_signature_method' => $this->getSignatureMethod(),
-            'oauthpdo_timestamp'        => $dateTime->format('U'),
-            'oauthpdo_version'          => $this->getVersion(),
+            'oauth_callback'         => $this->credentials->getCallbackUrl(),
+            'oauth_consumer_key'     => $this->credentials->getConsumerId(),
+            'oauth_nonce'            => $this->generateNonce(),
+            'oauth_signature_method' => $this->getSignatureMethod(),
+            'oauth_timestamp'        => $dateTime->format('U'),
+            'oauth_version'          => $this->getVersion(),
         );
 
         return $headerParameters;
@@ -277,7 +277,7 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
 
     /**
      * Parses the request token response and returns a TokenInterface.
-     * This is only needed to verify the `oauthpdo_callback_confirmed` parameter. The actual
+     * This is only needed to verify the `oauth_callback_confirmed` parameter. The actual
      * parsing logic is contained in the access token parser.
      *
      * @abstract

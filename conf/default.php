@@ -30,6 +30,7 @@ $conf['doorkeeper-authurl']  = 'https://doorkeeper-provider.herokuapp.com/oauthp
 $conf['doorkeeper-tokenurl'] = 'https://doorkeeper-provider.herokuapp.com/oauthpdo/token';
 $conf['mailRestriction']     = '';
 $conf['singleService']       = '';
+$conf['serviceOrder']       = '';
 
 /**
  * Default settings for the authpdo plugin

@@ -64,7 +64,7 @@ class HerokuTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            'https://id.heroku.com/oauthpdo/authorize',
+            'https://id.heroku.com/oauth/authorize',
             $service->getAuthorizationEndpoint()->getAbsoluteUri()
         );
     }
@@ -81,7 +81,7 @@ class HerokuTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://id.heroku.com/oauthpdo/token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://id.heroku.com/oauth/token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
     }
 
     /**

@@ -5,12 +5,12 @@ PHPoAuthLib provides oAuth support in PHP 5.3+ and is very easy to integrate wit
 [![Build Status](https://travis-ci.org/Lusitanian/PHPoAuthLib.png?branch=master)](https://travis-ci.org/Lusitanian/PHPoAuthLib)
 [![Code Coverage](https://scrutinizer-ci.com/g/Lusitanian/PHPoAuthLib/badges/coverage.png?s=a0a15bebfda49e79f9ce289b00c6dfebd18fc98e)](https://scrutinizer-ci.com/g/Lusitanian/PHPoAuthLib/)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Lusitanian/PHPoAuthLib/badges/quality-score.png?s=c5976d2fefceb501f0d886c1a5bf087e69b44533)](https://scrutinizer-ci.com/g/Lusitanian/PHPoAuthLib/)
-[![Latest Stable Version](https://poser.pugx.org/lusitanian/oauthpdo/v/stable.png)](https://packagist.org/packages/lusitanian/oauthpdo)
-[![Total Downloads](https://poser.pugx.org/lusitanian/oauthpdo/downloads.png)](https://packagist.org/packages/lusitanian/oauthpdo)
+[![Latest Stable Version](https://poser.pugx.org/lusitanian/oauth/v/stable.png)](https://packagist.org/packages/lusitanian/oauth)
+[![Total Downloads](https://poser.pugx.org/lusitanian/oauth/downloads.png)](https://packagist.org/packages/lusitanian/oauth)
 
 Installation
 ------------
-This library can be found on [Packagist](https://packagist.org/packages/lusitanian/oauthpdo).
+This library can be found on [Packagist](https://packagist.org/packages/lusitanian/oauth).
 The recommended way to install this is through [composer](http://getcomposer.org).
 
 Edit your `composer.json` and add:
@@ -18,7 +18,7 @@ Edit your `composer.json` and add:
 ```json
 {
     "require": {
-        "lusitanian/oauthpdo": "~0.3"
+        "lusitanian/oauth": "~0.3"
     }
 }
 ```
@@ -90,7 +90,7 @@ For usage with complete auth flow, please see the examples. More in-depth docume
 Framework Integration
 ---------------------
 * Lithium: Sébastien Charrier has written [an adapter](https://github.com/scharrier/li3_socialauth) for the library.
-* Laravel 4: Dariusz Prząda has written [a service provider](https://github.com/artdarek/oauthpdo-4-laravel) for the library.
+* Laravel 4: Dariusz Prząda has written [a service provider](https://github.com/artdarek/oauth-4-laravel) for the library.
 
 Extensions
 ----------

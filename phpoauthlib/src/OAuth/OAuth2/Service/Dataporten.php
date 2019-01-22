@@ -15,7 +15,7 @@ class Dataporten extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://auth.dataporten.no/oauthpdo/authorization');
+        return new Uri('https://auth.dataporten.no/oauth/authorization');
     }
 
     /**
@@ -23,7 +23,7 @@ class Dataporten extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://auth.dataporten.no/oauthpdo/token');
+        return new Uri('https://auth.dataporten.no/oauth/token');
     }
 
     protected function getAuthorizationMethod()

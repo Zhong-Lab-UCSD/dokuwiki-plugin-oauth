@@ -61,6 +61,7 @@ $meta['singleService']       = array('multichoice',
                                          'Yahoo',
                                          'Doorkeeper',
                                          'Keycloak'));
+$meta['serviceOrder'] = array('string');
 
 /**
  * Options for the authpdo plugin

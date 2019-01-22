@@ -14,7 +14,7 @@ use OAuth\Common\Http\Uri\UriInterface;
  * Box service.
  *
  * @author Antoine Corcy <contact@sbin.dk>
- * @link https://developers.box.com/oauthpdo/
+ * @link https://developers.box.com/oauth/
  */
 class Box extends AbstractService
 {

@@ -65,7 +65,7 @@ class Dailymotion extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://api.dailymotion.com/oauthpdo/authorize');
+        return new Uri('https://api.dailymotion.com/oauth/authorize');
     }
 
     /**
@@ -73,7 +73,7 @@ class Dailymotion extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://api.dailymotion.com/oauthpdo/token');
+        return new Uri('https://api.dailymotion.com/oauth/token');
     }
 
     /**

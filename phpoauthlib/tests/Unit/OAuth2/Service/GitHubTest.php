@@ -63,7 +63,7 @@ class GitHubTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://github.com/login/oauthpdo/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://github.com/login/oauth/authorize', $service->getAuthorizationEndpoint()->getAbsoluteUri());
     }
 
     /**
@@ -78,7 +78,7 @@ class GitHubTest extends \PHPUnit_Framework_TestCase
             $this->getMock('\\OAuth\\Common\\Storage\\TokenStorageInterface')
         );
 
-        $this->assertSame('https://github.com/login/oauthpdo/access_token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
+        $this->assertSame('https://github.com/login/oauth/access_token', $service->getAccessTokenEndpoint()->getAbsoluteUri());
     }
 
     /**

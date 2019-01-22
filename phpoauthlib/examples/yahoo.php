@@ -30,13 +30,13 @@ $credentials = new Credentials(
 // Instantiate the Yahoo service using the credentials, http client and storage mechanism for the token
 $yahooService = $serviceFactory->createService('Yahoo', $credentials, $storage);
 
-if (!empty($_GET['oauthpdo_token'])) {
+if (!empty($_GET['oauth_token'])) {
     $token = $storage->retrieveAccessToken('Yahoo');
 
     // This was a callback request from Yahoo, get the token
     $yahooService->requestAccessToken(
-        $_GET['oauthpdo_token'],
-        $_GET['oauthpdo_verifier'],
+        $_GET['oauth_token'],
+        $_GET['oauth_verifier'],
         $token->getRequestTokenSecret()
     );
 
@@ -49,7 +49,7 @@ if (!empty($_GET['oauthpdo_token'])) {
     // extra request needed for oauth1 to request a request token :-)
     $token = $yahooService->requestRequestToken();
 
-    $url = $yahooService->getAuthorizationUri(array('oauthpdo_token' => $token->getRequestToken()));
+    $url = $yahooService->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()));
     header('Location: ' . $url);
 } else {
     $url = $currentUri->getRelativeUri() . '?go=go';

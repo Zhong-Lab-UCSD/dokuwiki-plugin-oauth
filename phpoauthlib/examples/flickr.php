@@ -33,10 +33,10 @@ $flickrService = $serviceFactory->createService('Flickr', $credentials, $storage
 
 $step = isset($_GET['step']) ? (int)$_GET['step'] : null;
 
-$oauthpdo_token = isset($_GET['oauthpdo_token']) ? $_GET['oauthpdo_token'] : null;
-$oauthpdo_verifier = isset($_GET['oauthpdo_verifier']) ? $_GET['oauthpdo_verifier'] : null;
+$oauth_token = isset($_GET['oauth_token']) ? $_GET['oauth_token'] : null;
+$oauth_verifier = isset($_GET['oauth_verifier']) ? $_GET['oauth_verifier'] : null;
 
-if($oauthpdo_token && $oauthpdo_verifier){
+if($oauth_token && $oauth_verifier){
 	$step = 2;
 }
 
@@ -48,11 +48,11 @@ switch($step){
 	case 1:
 		
 		if($token = $flickrService->requestRequestToken()){
-			$oauthpdo_token = $token->getAccessToken();
+			$oauth_token = $token->getAccessToken();
 			$secret = $token->getAccessTokenSecret();
 			
-			if($oauthpdo_token && $secret){
-				$url = $flickrService->getAuthorizationUri(array('oauthpdo_token' => $oauthpdo_token, 'perms' => 'write'));
+			if($oauth_token && $secret){
+				$url = $flickrService->getAuthorizationUri(array('oauth_token' => $oauth_token, 'perms' => 'write'));
 				header('Location: '.$url);
 			}
 		}
@@ -63,8 +63,8 @@ switch($step){
 		$token = $storage->retrieveAccessToken('Flickr');
 		$secret = $token->getAccessTokenSecret();
 		
-		if($token = $flickrService->requestAccessToken($oauthpdo_token, $oauthpdo_verifier, $secret)){
-			$oauthpdo_token = $token->getAccessToken();
+		if($token = $flickrService->requestAccessToken($oauth_token, $oauth_verifier, $secret)){
+			$oauth_token = $token->getAccessToken();
 			$secret = $token->getAccessTokenSecret();
 			
 			$storage->storeAccessToken('Flickr', $token);

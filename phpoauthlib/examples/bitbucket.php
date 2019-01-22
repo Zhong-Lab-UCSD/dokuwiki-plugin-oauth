@@ -37,13 +37,13 @@ $credentials = new Credentials(
 /** @var $bbService BitBucket */
 $bbService = $serviceFactory->createService('BitBucket', $credentials, $storage);
 
-if (!empty($_GET['oauthpdo_token'])) {
+if (!empty($_GET['oauth_token'])) {
     $token = $storage->retrieveAccessToken('BitBucket');
 
     // This was a callback request from BitBucket, get the token
     $bbService->requestAccessToken(
-        $_GET['oauthpdo_token'],
-        $_GET['oauthpdo_verifier'],
+        $_GET['oauth_token'],
+        $_GET['oauth_verifier'],
         $token->getRequestTokenSecret()
     );
 
@@ -56,7 +56,7 @@ if (!empty($_GET['oauthpdo_token'])) {
     // extra request needed for oauth1 to request a request token :-)
     $token = $bbService->requestRequestToken();
 
-    $url = $bbService->getAuthorizationUri(array('oauthpdo_token' => $token->getRequestToken()));
+    $url = $bbService->getAuthorizationUri(array('oauth_token' => $token->getRequestToken()));
     header('Location: ' . $url);
 } else {
     $url = $currentUri->getRelativeUri() . '?go=go';

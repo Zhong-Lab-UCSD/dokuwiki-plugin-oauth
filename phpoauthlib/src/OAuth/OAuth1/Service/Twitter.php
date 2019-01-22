@@ -14,8 +14,8 @@ use OAuth\Common\Exception\Exception;
 
 class Twitter extends AbstractService
 {
-    const ENDPOINT_AUTHENTICATE = "https://api.twitter.com/oauthpdo/authenticate";
-    const ENDPOINT_AUTHORIZE    = "https://api.twitter.com/oauthpdo/authorize";
+    const ENDPOINT_AUTHENTICATE = "https://api.twitter.com/oauth/authenticate";
+    const ENDPOINT_AUTHORIZE    = "https://api.twitter.com/oauth/authorize";
 
     protected $authorizationEndpoint   = self::ENDPOINT_AUTHENTICATE;
 
@@ -38,7 +38,7 @@ class Twitter extends AbstractService
      */
     public function getRequestTokenEndpoint()
     {
-        return new Uri('https://api.twitter.com/oauthpdo/request_token');
+        return new Uri('https://api.twitter.com/oauth/request_token');
     }
 
     /**
@@ -73,7 +73,7 @@ class Twitter extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://api.twitter.com/oauthpdo/access_token');
+        return new Uri('https://api.twitter.com/oauth/access_token');
     }
 
     /**
@@ -85,7 +85,7 @@ class Twitter extends AbstractService
 
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
-        } elseif (!isset($data['oauthpdo_callback_confirmed']) || $data['oauthpdo_callback_confirmed'] !== 'true') {
+        } elseif (!isset($data['oauth_callback_confirmed']) || $data['oauth_callback_confirmed'] !== 'true') {
             throw new TokenResponseException('Error in retrieving token.');
         }
 
@@ -107,13 +107,13 @@ class Twitter extends AbstractService
 
         $token = new StdOAuth1Token();
 
-        $token->setRequestToken($data['oauthpdo_token']);
-        $token->setRequestTokenSecret($data['oauthpdo_token_secret']);
-        $token->setAccessToken($data['oauthpdo_token']);
-        $token->setAccessTokenSecret($data['oauthpdo_token_secret']);
+        $token->setRequestToken($data['oauth_token']);
+        $token->setRequestTokenSecret($data['oauth_token_secret']);
+        $token->setAccessToken($data['oauth_token']);
+        $token->setAccessTokenSecret($data['oauth_token_secret']);
 
         $token->setEndOfLife(StdOAuth1Token::EOL_NEVER_EXPIRES);
-        unset($data['oauthpdo_token'], $data['oauthpdo_token_secret']);
+        unset($data['oauth_token'], $data['oauth_token_secret']);
         $token->setExtraParams($data);
 
         return $token;

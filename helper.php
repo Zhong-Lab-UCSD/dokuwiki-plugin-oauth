@@ -70,16 +70,32 @@ class helper_plugin_oauthpdo extends DokuWiki_Plugin {
      */
     public function listServices($enabledonly = true) {
         $services = array();
+        $orderedServices = array();
+        $orderedDict = array();
+        if ($this->getConf('serviceOrder')) {
+            $orderedDict = array_map('trim',
+                array_map('strtolower',
+                    explode(',', $this->getConf('serviceOrder'))
+                )
+            );
+        }
+        
         $files    = glob(__DIR__.'/classes/*Adapter.php');
 
         foreach($files as $file) {
             $file = basename($file, 'Adapter.php');
             if($file == 'Abstract') continue;
             if($enabledonly && !$this->getKey($file)) continue;
-            $services[] = $file;
+            $orderedKey = array_search(strtolower(trim($file)), $orderedDict);
+            if ($orderedKey !== FALSE) {
+                $orderedServices[$orderedKey] = $file;
+            } else {
+                $services[] = $file;
+            }
         }
+        ksort($orderedServices);
 
-        return $services;
+        return array_merge($orderedServices, $services);
     }
 
     /**

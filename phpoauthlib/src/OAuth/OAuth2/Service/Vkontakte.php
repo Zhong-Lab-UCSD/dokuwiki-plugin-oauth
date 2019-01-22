@@ -57,7 +57,7 @@ class Vkontakte extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://oauthpdo.vk.com/authorize');
+        return new Uri('https://oauth.vk.com/authorize');
     }
 
     /**
@@ -65,7 +65,7 @@ class Vkontakte extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://oauthpdo.vk.com/access_token');
+        return new Uri('https://oauth.vk.com/access_token');
     }
 
     /**

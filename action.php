@@ -215,7 +215,7 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
             $html = $this->service_html($singleService);
 
         }
-        $form->_content[] = form_openfieldset(array('_legend' => $this->getLang('loginwith'), 'class' => 'plugin_oauthpdo'));
+        $form->_content[] = form_openfieldset(array('_legend' => '', 'class' => 'plugin_oauthpdo'));
         $form->_content[] = $html;
         $form->_content[] = form_closefieldset();
     }
@@ -224,7 +224,7 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         global $ID;
         $html = '';
         $html .= '<a href="' . wl($ID, array('oauthlogin' => $service)) . '" class="plugin_oauthpdo_' . $service . '">';
-        $html .= $service;
+        $html .= '<div>' . $this->getLang('loginButton') . $service . '</div>';
         $html .= '</a> ';
         return $html;
 
