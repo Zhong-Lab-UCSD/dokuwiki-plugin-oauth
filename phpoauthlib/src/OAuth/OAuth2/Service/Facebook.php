@@ -135,7 +135,7 @@ class Facebook extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://www.facebook.com/dialog/oauthpdo');
+        return new Uri('https://www.facebook.com/dialog/oauth');
     }
 
     /**
@@ -143,7 +143,7 @@ class Facebook extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://graph.facebook.com/oauthpdo/access_token');
+        return new Uri('https://graph.facebook.com/oauth/access_token');
     }
 
     /**
