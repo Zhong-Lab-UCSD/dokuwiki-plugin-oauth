@@ -151,8 +151,7 @@ class Facebook extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
-        // Facebook gives us a query string ... Oh wait. JSON is too simple, understand ?
-        parse_str($responseBody, $data);
+        $data = json_decode($responseBody, true);
 
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
