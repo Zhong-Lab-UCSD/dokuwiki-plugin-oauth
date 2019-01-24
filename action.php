@@ -19,6 +19,8 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
      */
     public function register(Doku_Event_Handler $controller) {
         global $conf;
+        error_log('action::register');
+
         if($conf['authtype'] != 'oauthpdo') return;
 
         $conf['profileconfirm'] = false; // password confirmation doesn't work with oauthpdo only users
@@ -40,6 +42,8 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
      */
     public function handle_start(Doku_Event &$event, $param) {
 
+        error_log('action::handle_start');
+
         if (isset($_SESSION[DOKU_COOKIE]['oauthpdo-done']['do']) || !empty($_SESSION[DOKU_COOKIE]['oauthpdo-done']['rev'])){
             $this->restoreSessionEnvironment();
             return;
@@ -51,16 +55,29 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
     private function startOAuthLogin() {
         global $INPUT, $ID;
 
+        error_log('action::startOAuthLogin');
+
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp         = plugin_load('helper', 'oauthpdo');
         $servicename = $INPUT->str('oauthlogin');
         $service     = $hlp->loadService($servicename);
-        if(is_null($service)) return;
+        if(is_null($service)) {
+            // Not an actual login service
+            // However, it is still possible the user is trying to link a new
+            // oauth account
+            $notInitLogin = true;
+            $servicename = $INPUT->str('oauthadd');
+            $service     = $hlp->loadService($servicename);
+            if (is_null($service)) {
+                return;
+            }
+        }
 
         // remember service in session
         session_start();
         $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['service'] = $servicename;
         $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['id']      = $ID;
+        $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['addNew']  = $notInitLogin;
         session_write_close();
 
         $service->login();
@@ -68,6 +85,8 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
 
     private function restoreSessionEnvironment() {
         global $INPUT, $ACT, $TEXT, $PRE, $SUF, $SUM, $RANGE, $DATE_AT, $REV;
+        error_log('action::restoreSessionEnv');
+
         $ACT = $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'];
         $_REQUEST = $_SESSION[DOKU_COOKIE]['oauthpdo-done']['$_REQUEST'];
 
@@ -97,6 +116,8 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         global $USERINFO;
         global $auth;
         global $INPUT;
+
+        error_log('action::handle_usermod');
 
         if($event->data['type'] != 'modify') return;
         if($ACT != 'profile') return;
@@ -145,6 +166,8 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         /** @var auth_plugin_authplain $auth */
         global $auth;
 
+        error_log('action::handle_profileform');
+
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp = plugin_load('helper', 'oauthpdo');
 
@@ -158,7 +181,27 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         $form->insertElement($pos, form_closefieldset());
         $form->insertElement(++$pos, form_openfieldset(array('_legend' => $this->getLang('loginwith'), 'class' => 'plugin_oauthpdo')));
         foreach($services as $service) {
-            $group = $auth->cleanGroup($service);
+            if ($singleService == '') {
+
+                foreach($hlp->listServices() as $service) {
+                    if ($isset($USERINFO['linkedAccounts'][strtolower($service)])) {
+                        foreach($USERINFO['linkedAccounts'][strtolower($service)] as $email) {
+                            $html .= $email . '<br>';
+                        }
+                    }
+                    $html .= $this->service_html($service);
+                }
+                if(!$html) return;
+
+            }else{
+                if (in_array($singleService, $enabledServices, true) === false) {
+                    msg($this->getLang('wrongConfig'),-1);
+                    return;
+                }
+                $form->_content = array();
+                $html = $this->service_html($singleService);
+
+            }
             $elem  = form_makeCheckboxField(
                 'oauthpdo_group['.$group.']',
                 1, $service, '', 'simple',
@@ -183,6 +226,8 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
      */
     public function handle_loginform(Doku_Event &$event, $param) {
         global $conf;
+
+        error_log('action::handle_loginform');
 
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp = plugin_load('helper', 'oauthpdo');
@@ -227,12 +272,22 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         $html .= '<div>' . $this->getLang('loginButton') . $service . '</div>';
         $html .= '</a> ';
         return $html;
+    }
 
+    function link_service_html ($service){
+        global $ID;
+        $html = '';
+        $html .= '<a href="' . wl($ID, array('oauthadd' => $service, 'do' => 'profile')) . '" class="plugin_oauthpdo_' . $service . '">';
+        $html .= '<div>' . $this->getLang('addLoginButton') . $service . '</div>';
+        $html .= '</a> ';
+        return $html;
     }
 
     public function handle_dologin(Doku_Event &$event, $param) {
         global $lang;
         global $ID;
+
+        error_log('action::handle_dologin');
 
         $singleService = $this->getConf('singleService');
         if ($singleService == '') return true;
