@@ -166,7 +166,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 ));
                 if ($result) {
                     array_splice($linkedAccounts, $key, 1);
-                    $_SESSION[DOKU_COOKIE]['auth']['info']  = $USERINFO;
+                    $this->updateUserSessionInfo($USERINFO);
                     $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
                     return TRUE;
                 }
@@ -241,15 +241,18 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
     protected function processLogin($sticky, $service, $servicename, $page, $params = array(), $addNew = false) {
         $uinfo = $service->getUser();
         $ok = $this->processUser($uinfo, $servicename, $addNew);
+        error_log('auth::processLogin');
         if(!$ok) {
             return false;
         }
-        $pdoUserInfo = $this->getUserData($uinfo['user']);
-        $uinfo = array_merge($uinfo, $pdoUserInfo);
-        $this->setUserSession($uinfo, $servicename);
-        $this->setUserCookie($uinfo['user'], $sticky, $servicename);
         if ($addNew) {
+            global $USERINFO;
             $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
+            $this->updateUserSessionInfo($USERINFO);
+        } else {
+            error_log(json_encode($uinfo, JSON_PRETTY_PRINT));
+            $this->setUserSession($uinfo, $servicename);
+            $this->setUserCookie($uinfo['user'], $sticky, $servicename);
         }
         if(isset($page)) {
             if(!empty($params['id'])) unset($params['id']);
@@ -296,26 +299,18 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             if (!$result) {
                 msg($this->getLang('cannotAddLinkedEmail'), -1);
                 return false;
+            } else {
+                $USERINFO['linkedAccounts'][$servicename] []= $mail;
             }
         } else {
             // regular login
             $user = $this->getUserByEmail($uinfo['mail'], $servicename);
             if ($user) {
                 $sinfo = $this->getUserData($user);
-                $sql = $this->getConf('get-user-linked-emails');
-                $linkedAccounts = array();
-                error_log($sql);
-                $result = $this->_query($sql, $sinfo);
-                foreach ($result as $row) {
-                    if (!isset($linkedAccounts[strtolower($row['service'])])) {
-                        $linkedAccounts[strtolower($row['service'])] = [];
-                    } 
-                    $linkedAccounts[strtolower($row['service'])] []= $row['email'];
-                }
+                $mergedGroups = array_merge((array) $uinfo['grps'], $sinfo['grps']);
+                $uinfo = array_merge($uinfo, $sinfo);
                 $uinfo['user'] = $user;
-                $uinfo['name'] = $sinfo['name'];
-                $uinfo['grps'] = array_merge((array) $uinfo['grps'], $sinfo['grps']);
-                $uinfo['linkedAccounts'] = $linkedAccounts;
+                $uinfo['grps'] = $mergedGroups;
             } elseif (actionOK('register')) {
                 $ok = $this->addUser($uinfo, $servicename);
                 if(!$ok) {
@@ -408,17 +403,21 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         if(!is_array($data['grps'])) {
             $data['grps'] = array();
         }
-        $data['grps'][] = $service;
         $data['grps']   = array_unique($data['grps']);
 
         $USERINFO                               = $data;
+        error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
         $_SERVER['REMOTE_USER']                 = $data['user'];
         $_SESSION[DOKU_COOKIE]['auth']['user']  = $data['user'];
         $_SESSION[DOKU_COOKIE]['auth']['pass']  = $data['pass'];
-        $_SESSION[DOKU_COOKIE]['auth']['info']  = $USERINFO;
+        $this->updateUserSessionInfo($USERINFO);
         $_SESSION[DOKU_COOKIE]['auth']['buid']  = auth_browseruid();
         $_SESSION[DOKU_COOKIE]['auth']['time']  = time();
         $_SESSION[DOKU_COOKIE]['auth']['oauthpdo'] = $service;
+    }
+
+    protected function updateUserSessionInfo ($userInfo) {
+        $_SESSION[DOKU_COOKIE]['auth']['info']  = $userInfo;
     }
 
     /**
@@ -501,6 +500,24 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         touch($conf['cachedir'] . '/sessionpurge');
 
         return $ok;
+    }
+
+    public function getUserData ($user, $requireGroups = true) {
+        $data = parent::getUserData($user, $requireGroups);
+        $sql = $this->getConf('get-user-linked-emails');
+        $linkedAccounts = array();
+        $result = $this->_query($sql, $data);
+        if ($result) {
+            foreach ($result as $row) {
+                if (!isset($linkedAccounts[strtolower($row['service'])])) {
+                    $linkedAccounts[strtolower($row['service'])] = [];
+                } 
+                $linkedAccounts[strtolower($row['service'])] []= $row['email'];
+            }
+            unset($row);
+        }
+        $data['linkedAccounts'] = $linkedAccounts;
+        return $data;
     }
 
 }
