@@ -35,9 +35,9 @@ class GoogleAdapter extends AbstractAdapter {
         return array(Google::SCOPE_USERINFO_EMAIL, Google::SCOPE_USERINFO_PROFILE);
     }
 
-    public function login() {
+    public function login($forceNew = false) {
         $parameters = array();
-        if(!empty($_SESSION[DOKU_COOKIE]['auth']['info']['mail'])) {
+        if(!forceNew && !empty($_SESSION[DOKU_COOKIE]['auth']['info']['mail'])) {
             $usermail = $_SESSION[DOKU_COOKIE]['auth']['info']['mail'];
             $parameters['login_hint'] = $usermail;
         }

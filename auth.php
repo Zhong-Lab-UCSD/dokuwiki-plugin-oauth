@@ -76,6 +76,16 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 ) {
                     $addNewLogin = true;
                 } else {
+                    // Check for oauthremove flag
+                    $servicename = $INPUT->str('oauthremove');
+                    if ($servicename) {
+                        $hlp     = plugin_load('helper', 'oauthpdo');
+                        $service     = $hlp->loadService($servicename);
+                        if (!is_null($service)) {
+                            // remove the oauth entry in-place before doing any other action
+                            return $this->oauthRemove($servicename, $INPUT->str('email'));
+                        }
+                    }
                     return true;
                 }
             }
@@ -140,6 +150,30 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
 
         // do the "normal" plain auth login via form
         return auth_login($user, $pass, $sticky);
+    }
+
+    protected function oauthRemove (string $serviceName, string $email = NULL) {
+        global $USERINFO;
+        if (isset($USERINFO['linkedAccounts'][strtolower($serviceName)])) {
+            $linkedAccounts =& $USERINFO['linkedAccounts'][strtolower($serviceName)];
+            $key = array_search($email, $linkedAccounts);
+            if ($key !== FALSE) {
+                $sql = $this->getConf('remove-linked-emails');
+                $result = $this->_query($sql, array(
+                    ':uid' => $USERINFO['uid'],
+                    ':service' => strtolower($serviceName),
+                    ':email' => $email
+                ));
+                if ($result) {
+                    array_splice($linkedAccounts, $key, 1);
+                    $_SESSION[DOKU_COOKIE]['auth']['info']  = $USERINFO;
+                    $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
+                    return TRUE;
+                }
+            }
+        }
+        msg($this->getLang('wrongEmailToUnlink'), -1);
+        return TRUE;
     }
 
     /**
@@ -210,9 +244,12 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         if(!$ok) {
             return false;
         }
-        if (!$addNew) {
-            $this->setUserSession($uinfo, $servicename);
-            $this->setUserCookie($uinfo['user'], $sticky, $servicename);
+        $pdoUserInfo = $this->getUserData($uinfo['user']);
+        $uinfo = array_merge($uinfo, $pdoUserInfo);
+        $this->setUserSession($uinfo, $servicename);
+        $this->setUserCookie($uinfo['user'], $sticky, $servicename);
+        if ($addNew) {
+            $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
         }
         if(isset($page)) {
             if(!empty($params['id'])) unset($params['id']);
@@ -234,6 +271,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         $uinfo['user'] = (string) $uinfo['user'];
         $servicename = strtolower($servicename);
         $actionDesc = $addNew ? "link your account" : "log you in";
+        error_log('processUser: ' . $addNew);
         if(!$uinfo['name']) $uinfo['name'] = $uinfo['user'];
 
         if(!$uinfo['user'] || !$uinfo['mail']) {
@@ -242,8 +280,9 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         }
 
         // see if the user is known already
-        $user = $this->getUserByEmail($uinfo['mail'], $servicename);
         if ($addNew) {
+            global $USERINFO;
+            $user = $this->getUserByEmail($uinfo['mail'], $servicename);
             if ($user) {
                 if ($user !== $_SESSION[DOKU_COOKIE]['auth']['user']) {
                     msg($this->getLang('serviceAlreadyLinked'), -1);
@@ -251,18 +290,22 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 return false;
             }
             $sql = $this->getConf('add-linked-emails');
-            $mail = strtolower($mail);
-            $result = $this->_query($sql, array_merge($uinfo, array(':email' => $mail, ':service' => $servicename)));
-            if ($result) {
-                return $result[0]['user'];
+            $mail = strtolower($uinfo['mail']);
+            error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
+            $result = $this->_query($sql, array_merge($USERINFO, array(':email' => $mail, ':service' => $servicename)));
+            if (!$result) {
+                msg($this->getLang('cannotAddLinkedEmail'), -1);
+                return false;
             }
         } else {
             // regular login
+            $user = $this->getUserByEmail($uinfo['mail'], $servicename);
             if ($user) {
                 $sinfo = $this->getUserData($user);
-                $sql = $this->getConf('get-linked-emails');
+                $sql = $this->getConf('get-user-linked-emails');
                 $linkedAccounts = array();
-                $result = $this->_query($sql, $uinfo);
+                error_log($sql);
+                $result = $this->_query($sql, $sinfo);
                 foreach ($result as $row) {
                     if (!isset($linkedAccounts[strtolower($row['service'])])) {
                         $linkedAccounts[strtolower($row['service'])] = [];

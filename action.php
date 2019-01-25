@@ -80,7 +80,7 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['addNew']  = $notInitLogin;
         session_write_close();
 
-        $service->login();
+        $service->login($notInitLogin);
     }
 
     private function restoreSessionEnvironment() {
@@ -170,47 +170,29 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
 
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp = plugin_load('helper', 'oauthpdo');
+        $singleService = $this->getConf('singleService');
+        $enabledServices = $hlp->listServices();
+        error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
 
         /** @var Doku_Form $form */
         $form =& $event->data;
         $pos  = $form->findElementByAttribute('type', 'submit');
 
-        $services = $hlp->listServices();
-        if(!$services) return;
+        if(!$enabledServices) return;
 
         $form->insertElement($pos, form_closefieldset());
         $form->insertElement(++$pos, form_openfieldset(array('_legend' => $this->getLang('loginwith'), 'class' => 'plugin_oauthpdo')));
-        foreach($services as $service) {
-            if ($singleService == '') {
-
-                foreach($hlp->listServices() as $service) {
-                    if ($isset($USERINFO['linkedAccounts'][strtolower($service)])) {
-                        foreach($USERINFO['linkedAccounts'][strtolower($service)] as $email) {
-                            $html .= $email . '<br>';
-                        }
-                    }
-                    $html .= $this->service_html($service);
-                }
-                if(!$html) return;
-
-            }else{
-                if (in_array($singleService, $enabledServices, true) === false) {
-                    msg($this->getLang('wrongConfig'),-1);
-                    return;
-                }
-                $form->_content = array();
-                $html = $this->service_html($singleService);
-
+        if ($singleService == '') {
+            foreach($enabledServices as $service) {
+                $form->insertElement(++$pos, $this->link_service_html($service));
             }
-            $elem  = form_makeCheckboxField(
-                'oauthpdo_group['.$group.']',
-                1, $service, '', 'simple',
-                array(
-                    'checked' => (in_array($group, $USERINFO['grps'])) ? 'checked' : ''
-                )
-            );
 
-            $form->insertElement(++$pos, $elem);
+        } else {
+            if (in_array($singleService, $enabledServices, true) === false) {
+                msg($this->getLang('wrongConfig'),-1);
+                return;
+            }
+            $form->insertElement(++$pos, $this->link_service_html($singleService));
         }
         $form->insertElement(++$pos, form_closefieldset());
         $form->insertElement(++$pos, form_openfieldset(array()));
@@ -274,10 +256,18 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         return $html;
     }
 
-    function link_service_html ($service){
+    function link_service_html (string $service) {
         global $ID;
+        global $USERINFO;
         $html = '';
-        $html .= '<a href="' . wl($ID, array('oauthadd' => $service, 'do' => 'profile')) . '" class="plugin_oauthpdo_' . $service . '">';
+        error_log('link_service_html: ' . $service);
+        if (isset($USERINFO['linkedAccounts'][strtolower($service)])) {
+            foreach($USERINFO['linkedAccounts'][strtolower($service)] as $email) {
+                $html .= $email .
+                '<a href="' . wl($ID, array('oauthremove' => $service, 'email' => $email)) . '" class="plugin_oauthpdo_remove_link" title="">Unlink</a><br>';
+            }
+        }
+        $html .= '<a href="' . wl($ID, array('oauthadd' => $service)) . '" class="plugin_oauthpdo_' . $service . '">';
         $html .= '<div>' . $this->getLang('addLoginButton') . $service . '</div>';
         $html .= '</a> ';
         return $html;

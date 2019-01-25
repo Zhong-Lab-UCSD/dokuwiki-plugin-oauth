@@ -66,7 +66,7 @@ $conf['select-user-from-email'] = '';
  * statement to select all linked emails of the user
  *
  * input: :user, [uid]
- * return: user, service, email
+ * return: service, email
  */
 $conf['get-user-linked-emails'] = '';
 /**
