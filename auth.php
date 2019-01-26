@@ -73,7 +73,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         $session = $_SESSION[DOKU_COOKIE]['auth'];
         error_log(json_encode($_SESSION[DOKU_COOKIE], JSON_PRETTY_PRINT));
         if(isset($session['oauthpdo'])) {
-            $servicename = $session['oauthpdo'];
+            $serviceName = $session['oauthpdo'];
             // check if session data is still considered valid
             if ($this->isSessionValid($session)) {
                 $_SERVER['REMOTE_USER'] = $session['user'];
@@ -88,7 +88,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             if(isset($_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']) &&
                 !isset($_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['addNew'])
             ) {
-                $servicename = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['service'];
+                $serviceName = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['service'];
                 $page        = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['id'];
                 $params      = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['params'];
 
@@ -97,20 +97,19 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             }
 
             // either we're in oauthpdo login or a previous log needs to be rechecked
-            if(isset($servicename)) {
+            if(isset($serviceName)) {
                 /** @var helper_plugin_oauthpdo $hlp */
                 $hlp     = plugin_load('helper', 'oauthpdo');
 
                 /** @var OAuth\Plugin\AbstractAdapter $service */
-                $service = $hlp->loadService($servicename);
+                $service = $hlp->loadService($serviceName);
                 if(is_null($service)) {
                     $this->cleanLogout();
                     $authenticated = FALSE;
                 }
 
-                error_log('$service->checkToken(): addnewLogin: ' . $addNewLogin);
                 if($service->checkToken()) {
-                    $ok = $this->processLogin($sticky, $service, $servicename, $page, $params, $addNewLogin);
+                    $ok = $this->processLogin($sticky, $service, $serviceName, $page, $params, $addNewLogin);
                     if (!$ok) {
                         $this->cleanLogout();
                         $authenticated = false;
@@ -123,7 +122,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                         $authenticated = false;
                     } else {
                         // first time here
-                        return $this->relogin($servicename);
+                        return $this->relogin($serviceName);
                     }
                 }
 
@@ -132,12 +131,12 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             } elseif (isset($_COOKIE[DOKU_COOKIE])) {
                 global $INPUT;
                 //try cookie
-                list($cookieuser, $cookiesticky, $auth, $servicename) = explode('|', $_COOKIE[DOKU_COOKIE]);
+                list($cookieuser, $cookiesticky, $auth, $serviceName) = explode('|', $_COOKIE[DOKU_COOKIE]);
                 $cookieuser = base64_decode($cookieuser, true);
                 $auth = base64_decode($auth, true);
-                $servicename = base64_decode($servicename, true);
+                $serviceName = base64_decode($serviceName, true);
                 if ($auth === 'oauthpdo') {
-                    return $this->relogin($servicename);
+                    return $this->relogin($serviceName);
                 }
             }
         }
@@ -146,27 +145,42 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             // do the "normal" plain auth login via form
             $authenticated = auth_login($user, $pass, $sticky);
         }
-                if (isset($_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']) &&
-                    isset($_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['addNew']) &&
-                    $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['addNew']
-                ) {
-                    $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
-                    $addNewLogin = TRUE;
-                } else {
-                    // Check for oauthremove flag
-                    $servicename = $INPUT->str('oauthremove');
-                    if ($servicename) {
-                        $hlp     = plugin_load('helper', 'oauthpdo');
-                        $service     = $hlp->loadService($servicename);
-                        if (!is_null($service)) {
-                            // remove the oauth entry in-place before doing any other action
-                            $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
-                            return $this->oauthRemove($servicename, $INPUT->str('email'));
-                        }
-                    }
-                    return TRUE;
-                }
 
+        if ($authenticated) {
+            return $this->oauthAddRemove();
+        }
+
+        return $authenticated;
+    }
+
+    protected function oauthAddRemove () {
+        global $USERINFO, $INPUT;
+        $hlp = plugin_load('helper', 'oauthpdo');
+    
+        if (isset($_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['addNew'])) {
+            $serviceName = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['service'];
+            $page        = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['id'];
+            $params      = $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['params'];
+            unset($_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']);
+            $service = $hlp->loadService($serviceName);
+            if (!is_null($service) && $service->checkToken()) {
+                $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
+                return $this->processLogin(FALSE, $service, $serviceName, $page, $params, TRUE);
+            }
+        } else if ($INPUT->str('oauthremove')) {
+            // Check for oauthremove flag
+            $serviceName = $INPUT->str('oauthremove');
+            if ($serviceName) {
+                $hlp     = plugin_load('helper', 'oauthpdo');
+                $service     = $hlp->loadService($serviceName);
+                if (!is_null($service)) {
+                    // remove the oauth entry in-place before doing any other action
+                    $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'] = 'profile';
+                    return $this->oauthRemove($serviceName, $INPUT->str('email'));
+                }
+            }
+        }
+        return TRUE;
     }
 
     protected function oauthRemove (string $serviceName, string $email = NULL) {
@@ -214,17 +228,17 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         return false;
     }
 
-    protected function relogin($servicename) {
+    protected function relogin($serviceName) {
         global $INPUT;
 
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp     = plugin_load('helper', 'oauthpdo');
-        $service     = $hlp->loadService($servicename);
+        $service     = $hlp->loadService($serviceName);
         if(is_null($service)) return false;
 
         // remember service in session
         session_start();
-        $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['service'] = $servicename;
+        $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['service'] = $serviceName;
         $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['id']      = $INPUT->str('id');
         $_SESSION[DOKU_COOKIE]['oauthpdo-inprogress']['params']  = $_GET;
 
@@ -250,26 +264,26 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
     /**
      * @param                              $sticky
      * @param OAuth\Plugin\AbstractAdapter $service
-     * @param string                       $servicename
+     * @param string                       $serviceName
      * @param string                       $page
      * @param array                        $params
      * @param bool                         $addNew
      *
      * @return bool
      */
-    protected function processLogin($sticky, $service, $servicename, $page, $params = array(), $addNew = false) {
+    protected function processLogin($sticky, $service, $serviceName, $page, $params = array(), $addNew = false) {
         error_log('$this->processLogin(): addNew' . $addNew);
         $uinfo = $service->getUser();
-        $ok = $this->processUser($uinfo, $servicename, $addNew);
+        $ok = $this->processUser($uinfo, $serviceName, $addNew);
         if ($ok) {
             if ($addNew) {
                 global $USERINFO;
                 $this->updateUserSessionInfo($USERINFO);
-                $_SESSION[DOKU_COOKIE]['oauthpdo-done']['msg'] = sprintf($this->getLang('oauthAddSuccessful'), $servicename, $uinfo['mail']);
+                $_SESSION[DOKU_COOKIE]['oauthpdo-done']['msg'] = sprintf($this->getLang('oauthAddSuccessful'), $serviceName, $uinfo['mail']);
                 $_SESSION[DOKU_COOKIE]['oauthpdo-done']['msgLvl'] = 1;
             } else {
-                $this->setUserSession($uinfo, $servicename);
-                $this->setUserCookie($uinfo['user'], $sticky, $servicename);
+                $this->setUserSession($uinfo, $serviceName);
+                $this->setUserCookie($uinfo['user'], $sticky, $serviceName);
             }
         }
         if (!$addNew && !$ok) {
@@ -286,48 +300,48 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      * process the user and update the $uinfo array
      *
      * @param $uinfo
-     * @param $servicename
+     * @param $serviceName
      * @param bool $addNew
      *
      * @return bool
      */
-    protected function processUser(&$uinfo, $servicename, $addNew = false) {
+    protected function processUser(&$uinfo, $serviceName, $addNew = false) {
         $uinfo['user'] = (string) $uinfo['user'];
         error_log('$this->processUser(): addnew: ' . $addNew);
         $actionDesc = $addNew ? "link your account" : "log you in";
         if(!$uinfo['name']) $uinfo['name'] = $uinfo['user'];
 
         if(!$uinfo['user'] || !$uinfo['mail']) {
-            msg("$servicename did not provide the needed user info. Can't " . $actionDesc, -1);
+            msg("$serviceName did not provide the needed user info. Can't " . $actionDesc, -1);
             return false;
         }
 
         // see if the user is known already
         if ($addNew) {
             global $USERINFO;
-            $user = $this->getUserByEmail($uinfo['mail'], $servicename);
+            $user = $this->getUserByEmail($uinfo['mail'], $serviceName);
             error_log('$user: ' . $user);
             if ($user) {
                 if ($user !== $_SESSION[DOKU_COOKIE]['auth']['user']) {
-                    msg(sprintf($this->getLang('serviceAlreadyLinked'), $servicename, $uinfo['mail']), -1);
+                    msg(sprintf($this->getLang('serviceAlreadyLinked'), $serviceName, $uinfo['mail']), -1);
                 } else {
-                    msg(sprintf($this->getLang('serviceAlreadyLinkedSameUser'), $servicename, $uinfo['mail']), 0);
+                    msg(sprintf($this->getLang('serviceAlreadyLinkedSameUser'), $serviceName, $uinfo['mail']), 0);
                 }
                 return FALSE;
             }
             $sql = $this->getConf('add-linked-emails');
             $mail = strtolower($uinfo['mail']);
             error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
-            $result = $this->_query($sql, array_merge($USERINFO, array(':email' => $mail, ':service' => strtolower($servicename))));
+            $result = $this->_query($sql, array_merge($USERINFO, array(':email' => $mail, ':service' => strtolower($serviceName))));
             if (!$result) {
                 msg($this->getLang('cannotAddLinkedEmail'), -1);
                 return false;
             } else {
-                $USERINFO['linkedAccounts'][strtolower($servicename)] []= $mail;
+                $USERINFO['linkedAccounts'][strtolower($serviceName)] []= $mail;
             }
         } else {
             // regular login
-            $user = $this->getUserByEmail($uinfo['mail'], $servicename);
+            $user = $this->getUserByEmail($uinfo['mail'], $serviceName);
             if ($user) {
                 $sinfo = $this->getUserData($user);
                 $mergedGroups = array_merge((array) $uinfo['grps'], $sinfo['grps']);
@@ -335,7 +349,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 $uinfo['user'] = $user;
                 $uinfo['grps'] = $mergedGroups;
             } elseif (actionOK('register')) {
-                $ok = $this->addUser($uinfo, $servicename);
+                $ok = $this->addUser($uinfo, $serviceName);
                 if(!$ok) {
                     msg('Something went wrong creating your user account. please try again later.', -1);
                     return false;
@@ -352,11 +366,11 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      * new user, create him - making sure the login is unique by adding a number if needed
      *
      * @param array $uinfo user info received from the oAuth service
-     * @param string $servicename
+     * @param string $serviceName
      *
      * @return bool
      */
-    protected function addUser(&$uinfo, $servicename) {
+    protected function addUser(&$uinfo, $serviceName) {
         global $conf;
         $user = $uinfo['user'];
         $count = '';
@@ -371,7 +385,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         $uinfo['user'] = $user;
         $groups_on_creation = array();
         $groups_on_creation[] = $conf['defaultgroup'];
-        $groups_on_creation[] = $servicename; // add service as group
+        $groups_on_creation[] = $serviceName; // add service as group
         $uinfo['grps'] = array_merge((array) $uinfo['grps'], $groups_on_creation);
 
         $ok = $this->triggerUserMod(
@@ -395,11 +409,11 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      * @param $service - the service the user is using
      * @return bool|string
      */
-    protected function getUserByEmail($mail, $servicename = null) {
-        if ($servicename) {
+    protected function getUserByEmail($mail, $serviceName = null) {
+        if ($serviceName) {
             $sql = $this->getConf('select-user-from-email-with-service');
             $mail = strtolower($mail);
-            $result = $this->_query($sql, array(':mail' => $mail, ':service' => strtolower($servicename)));
+            $result = $this->_query($sql, array(':mail' => $mail, ':service' => strtolower($serviceName)));
             if ($result) {
                 return $result[0]['user'];
             }
@@ -445,11 +459,11 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
     /**
      * @param string $user
      * @param bool   $sticky
-     * @param string $servicename
+     * @param string $serviceName
      * @param int    $validityPeriodInSeconds optional, per default 1 Year
      */
-    private function setUserCookie($user, $sticky, $servicename, $validityPeriodInSeconds = 31536000) {
-        $cookie = base64_encode($user).'|'.((int) $sticky).'|'.base64_encode('oauthpdo').'|'.base64_encode($servicename);
+    private function setUserCookie($user, $sticky, $serviceName, $validityPeriodInSeconds = 31536000) {
+        $cookie = base64_encode($user).'|'.((int) $sticky).'|'.base64_encode('oauthpdo').'|'.base64_encode($serviceName);
         $cookieDir = empty($conf['cookiedir']) ? DOKU_REL : $conf['cookiedir'];
         $time      = $sticky ? (time() + $validityPeriodInSeconds) : 0;
         setcookie(DOKU_COOKIE,$cookie, $time, $cookieDir, '',($conf['securecookie'] && is_ssl()), true);

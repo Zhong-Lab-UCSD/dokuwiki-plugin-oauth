@@ -37,7 +37,7 @@ class GoogleAdapter extends AbstractAdapter {
 
     public function login($forceNew = false) {
         $parameters = array();
-        if(!forceNew && !empty($_SESSION[DOKU_COOKIE]['auth']['info']['mail'])) {
+        if(!$forceNew && !empty($_SESSION[DOKU_COOKIE]['auth']['info']['mail'])) {
             $usermail = $_SESSION[DOKU_COOKIE]['auth']['info']['mail'];
             $parameters['login_hint'] = $usermail;
         }
@@ -47,6 +47,10 @@ class GoogleAdapter extends AbstractAdapter {
         if ($farmer && $animal = $farmer->getAnimal()) {
             $parameters['state'] = urlencode(base64_encode(json_encode(array('animal'=>$animal,'state'=> md5(rand())))));
             $this->storage->storeAuthorizationState('Google', $parameters['state']);
+        }
+
+        if ($forceNew) {
+            $parameters['prompt'] = 'select_account';
         }
         $url = $this->oAuth->getAuthorizationUri($parameters);
         send_redirect($url);
