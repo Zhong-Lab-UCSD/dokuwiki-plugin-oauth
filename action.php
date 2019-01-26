@@ -19,7 +19,6 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
      */
     public function register(Doku_Event_Handler $controller) {
         global $conf;
-        error_log('action::register');
 
         if($conf['authtype'] != 'oauthpdo') return;
 
@@ -28,7 +27,6 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         $controller->register_hook('DOKUWIKI_STARTED', 'BEFORE', $this, 'handle_start');
         $controller->register_hook('HTML_LOGINFORM_OUTPUT', 'BEFORE', $this, 'handle_loginform');
         $controller->register_hook('HTML_UPDATEPROFILEFORM_OUTPUT', 'BEFORE', $this, 'handle_profileform');
-        $controller->register_hook('AUTH_USER_CHANGE', 'BEFORE', $this, 'handle_usermod');
         $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_dologin');
     }
 
@@ -42,8 +40,6 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
      */
     public function handle_start(Doku_Event &$event, $param) {
 
-        error_log('action::handle_start');
-
         if (isset($_SESSION[DOKU_COOKIE]['oauthpdo-done']['do']) || !empty($_SESSION[DOKU_COOKIE]['oauthpdo-done']['rev'])){
             $this->restoreSessionEnvironment();
             return;
@@ -54,8 +50,6 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
 
     private function startOAuthLogin() {
         global $INPUT, $ID;
-
-        error_log('action::startOAuthLogin');
 
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp         = plugin_load('helper', 'oauthpdo');
@@ -85,7 +79,6 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
 
     private function restoreSessionEnvironment() {
         global $INPUT, $ACT, $TEXT, $PRE, $SUF, $SUM, $RANGE, $DATE_AT, $REV;
-        error_log('action::restoreSessionEnv');
 
         $ACT = $_SESSION[DOKU_COOKIE]['oauthpdo-done']['do'];
         $_REQUEST = $_SESSION[DOKU_COOKIE]['oauthpdo-done']['$_REQUEST'];
@@ -100,57 +93,13 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         $SUF = cleanText($INPUT->post->str('suffix'));
         $SUM = $INPUT->post->str('summary');
 
+        if (isset($_SESSION[DOKU_COOKIE]['oauthpdo-done']['msg'])) {
+            $msgLvl = isset($_SESSION[DOKU_COOKIE]['oauthpdo-done']['msgLvl'])
+                ? $_SESSION[DOKU_COOKIE]['oauthpdo-done']['msgLvl'] : 0;
+            msg($_SESSION[DOKU_COOKIE]['oauthpdo-done']['msg'], $msgLvl);
+        }
+
         unset($_SESSION[DOKU_COOKIE]['oauthpdo-done']);
-    }
-
-    /**
-     * Save groups for all the services a user has enabled
-     *
-     * @param Doku_Event $event  event object by reference
-     * @param mixed      $param  [the parameters passed as fifth argument to register_hook() when this
-     *                           handler was registered]
-     * @return void
-     */
-    public function handle_usermod(Doku_Event &$event, $param) {
-        global $ACT;
-        global $USERINFO;
-        global $auth;
-        global $INPUT;
-
-        error_log('action::handle_usermod');
-
-        if($event->data['type'] != 'modify') return;
-        if($ACT != 'profile') return;
-
-        // we want to modify the user's groups
-        $groups = $USERINFO['grps']; //current groups
-        if(isset($event->data['params'][1]['grps'])) {
-            // something already defined new groups
-            $groups = $event->data['params'][1]['grps'];
-        }
-
-        /** @var helper_plugin_oauthpdo $hlp */
-        $hlp = plugin_load('helper', 'oauthpdo');
-
-        // get enabled and configured services
-        $enabled  = $INPUT->arr('oauthpdo_group');
-        $services = $hlp->listServices();
-        $services = array_map(array($auth, 'cleanGroup'), $services);
-
-        // add all enabled services as group, remove all disabled services
-        foreach($services as $service) {
-            if(isset($enabled[$service])) {
-                $groups[] = $service;
-            } else {
-                $idx = array_search($service, $groups);
-                if($idx !== false) unset($groups[$idx]);
-            }
-        }
-        $groups = array_unique($groups);
-
-        // add new group array to event data
-        $event->data['params'][1]['grps'] = $groups;
-
     }
 
     /**
@@ -166,13 +115,10 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
         /** @var auth_plugin_authplain $auth */
         global $auth;
 
-        error_log('action::handle_profileform');
-
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp = plugin_load('helper', 'oauthpdo');
         $singleService = $this->getConf('singleService');
         $enabledServices = $hlp->listServices();
-        error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
 
         /** @var Doku_Form $form */
         $form =& $event->data;
@@ -182,6 +128,7 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
 
         $form->insertElement($pos, form_closefieldset());
         $form->insertElement(++$pos, form_openfieldset(array('_legend' => $this->getLang('loginwith'), 'class' => 'plugin_oauthpdo')));
+        $form->insertElement(++$pos, '<div class="plugin_oauthpdo_link_desc">' . $this->getLang('loginWithDesc') . '</div>');
         if ($singleService == '') {
             foreach($enabledServices as $service) {
                 $form->insertElement(++$pos, $this->link_service_html($service));
@@ -208,8 +155,6 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
      */
     public function handle_loginform(Doku_Event &$event, $param) {
         global $conf;
-
-        error_log('action::handle_loginform');
 
         /** @var helper_plugin_oauthpdo $hlp */
         $hlp = plugin_load('helper', 'oauthpdo');
@@ -259,25 +204,34 @@ class action_plugin_oauthpdo extends DokuWiki_Action_Plugin {
     function link_service_html (string $service) {
         global $ID;
         global $USERINFO;
-        $html = '';
-        error_log('link_service_html: ' . $service);
+        $html = '<div class="plugin_oauthpdo_link_service_group">' .
+            '<div class="plugin_oauthpdo_link_service_group_header ' .
+            'plugin_oauthpdo_link_service_group_' . $service . '">' .
+            '<div class="plugin_oauthpdo_link_service_group_header_text">' .
+            sprintf($this->getLang('linkedServiceGroup'), $service) .
+            '</div></div><div class="plugin_oauthpdo_link_service_container">';
         if (isset($USERINFO['linkedAccounts'][strtolower($service)])) {
             foreach($USERINFO['linkedAccounts'][strtolower($service)] as $email) {
-                $html .= $email .
-                '<a href="' . wl($ID, array('oauthremove' => $service, 'email' => $email)) . '" class="plugin_oauthpdo_remove_link" title="">Unlink</a><br>';
+                $html .= '<div class="plugin_oauthpdo_link_service_entry">' .
+                    '<div class="plugin_oauthpdo_link_service_email">' .
+                    $email . '</div>' .
+                    '<a href="' .
+                    wl($ID, array('oauthremove' => $service, 'email' => $email)) .
+                    '" class="plugin_oauthpdo_remove_link" title="' . 
+                    $this->getLang('unlink') .
+                    '"><i class="material-icons">link_off</i></a></div>';
             }
         }
-        $html .= '<a href="' . wl($ID, array('oauthadd' => $service)) . '" class="plugin_oauthpdo_' . $service . '">';
-        $html .= '<div>' . $this->getLang('addLoginButton') . $service . '</div>';
-        $html .= '</a> ';
+        $html .= '<a href="' . wl($ID, array('oauthadd' => $service)) . '" class="plugin_oauthpdo_add_link">';
+        $html .= '<i class="material-icons">link</i>';
+        $html .= '<div class="plugin_oauthpdo_add_link_text">' . sprintf($this->getLang('addLoginButton'), $service) . '</div>';
+        $html .= '</a> </div></div>';
         return $html;
     }
 
     public function handle_dologin(Doku_Event &$event, $param) {
         global $lang;
         global $ID;
-
-        error_log('action::handle_dologin');
 
         $singleService = $this->getConf('singleService');
         if ($singleService == '') return true;

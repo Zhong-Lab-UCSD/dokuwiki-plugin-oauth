@@ -23,6 +23,17 @@
     background-repeat: no-repeat;
 }
 
+.plugin_oauthpdo_group_logo(@colorBg) {
+    display: block;
+    background-color: @colorBg;
+    margin: 0 16px 0 0;
+    width: 34px;
+    height: 34px;
+    background-size: 18px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 #dw__login {
     .plugin_oauthpdo {
         a {
@@ -73,5 +84,100 @@
             padding-left: (20px+24px);
         }
 
+    }
+}
+
+#dw__register {
+    .plugin_oauthpdo {
+        div.plugin_oauthpdo_link_desc {
+            text-align: left;
+            margin-bottom: 1em;
+        }
+
+        div.plugin_oauthpdo_link_service_group {
+            display: flex;
+            text-align: left;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            border-radius: 5px;
+            border: 1px solid #CCCCCC;
+            margin-bottom: 0.75em;
+        }
+        
+        div.plugin_oauthpdo_link_service_group_header {
+            border-bottom: 1px dashed #CCCCCC;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+        
+        div.plugin_oauthpdo_link_service_group_header_text {
+            font-size: 1.2em;
+            flex: auto;
+        }
+        
+        div.plugin_oauthpdo_link_service_group_Google::before {
+            .plugin_oauthpdo_group_logo(#FFFFFF);
+            background-image: url('images/Google.png');
+            content: '';
+        }
+        
+        div.plugin_oauthpdo_link_service_group_Github::before {
+            .plugin_oauthpdo_group_logo(none);
+            background-image: url('images/GitHub-Mark-120px-plus.png');
+            content: '';
+        }
+        
+        div.plugin_oauthpdo_link_service_group_Facebook::before {
+            .plugin_oauthpdo_group_logo(none);
+            background-image: url('images/flogo_RGB_HEX-144.png');
+            content: '';
+        }
+        
+        div.plugin_oauthpdo_link_service_container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            padding: 0.5em;
+        }
+        
+        div.plugin_oauthpdo_link_service_entry {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: nowrap;
+            padding: 0 0.5em;
+        }
+        
+        div.plugin_oauthpdo_link_service_email {
+            flex: auto;
+            margin-right: 0.5em;
+        }
+        
+        .plugin_oauthpdo_remove_link {
+            flex: none;
+        }
+        
+        .plugin_oauthpdo_add_link {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: nowrap;
+            padding: 0.3em 0.5em;
+            border: 1px solid #CCCCCC;
+            background: #EEEEEE;
+            border-radius: 4px;
+        }
+
+        .plugin_oauthpdo_add_link:hover, .plugin_oauthpdo_add_link:focus {
+            background: #DDDDDD;
+            text-decoration: none;
+        }
+
+        .plugin_oauthpdo_add_link_text {
+            flex: auto;
+            margin-left: 0.5em;
+        }
     }
 }
