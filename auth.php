@@ -71,7 +71,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
 
         // check session for existing oAuth login data
         $session = $_SESSION[DOKU_COOKIE]['auth'];
-        error_log(json_encode($_SESSION[DOKU_COOKIE], JSON_PRETTY_PRINT));
+        // error_log(json_encode($_SESSION[DOKU_COOKIE], JSON_PRETTY_PRINT));
         if(isset($session['oauthpdo'])) {
             $serviceName = $session['oauthpdo'];
             // check if session data is still considered valid
@@ -214,7 +214,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      */
     protected function isSessionValid ($session) {
         /** @var helper_plugin_oauthpdo $hlp */
-        error_log('$this->isSessionValid()');
+        // error_log('$this->isSessionValid()');
         $hlp     = plugin_load('helper', 'oauthpdo');
         if ($hlp->validBrowserID($session)) {
             if (!$hlp->isSessionTimedOut($session)) {
@@ -224,7 +224,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 return true;
             }
         }
-        error_log('$this->isSessionValid() === FALSE');
+        // error_log('$this->isSessionValid() === FALSE');
         return false;
     }
 
@@ -272,7 +272,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      * @return bool
      */
     protected function processLogin($sticky, $service, $serviceName, $page, $params = array(), $addNew = false) {
-        error_log('$this->processLogin(): addNew' . $addNew);
+        // error_log('$this->processLogin(): addNew' . $addNew);
         $uinfo = $service->getUser();
         $ok = $this->processUser($uinfo, $serviceName, $addNew);
         if ($ok) {
@@ -307,7 +307,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      */
     protected function processUser(&$uinfo, $serviceName, $addNew = false) {
         $uinfo['user'] = (string) $uinfo['user'];
-        error_log('$this->processUser(): addnew: ' . $addNew);
+        // error_log('$this->processUser(): addnew: ' . $addNew);
         $actionDesc = $addNew ? "link your account" : "log you in";
         if(!$uinfo['name']) $uinfo['name'] = $uinfo['user'];
 
@@ -320,7 +320,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         if ($addNew) {
             global $USERINFO;
             $user = $this->getUserByEmail($uinfo['mail'], $serviceName);
-            error_log('$user: ' . $user);
+            // error_log('$user: ' . $user);
             if ($user) {
                 if ($user !== $_SESSION[DOKU_COOKIE]['auth']['user']) {
                     msg(sprintf($this->getLang('serviceAlreadyLinked'), $serviceName, $uinfo['mail']), -1);
@@ -331,7 +331,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             }
             $sql = $this->getConf('add-linked-emails');
             $mail = strtolower($uinfo['mail']);
-            error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
+            // error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
             $result = $this->_query($sql, array_merge($USERINFO, array(':email' => $mail, ':service' => strtolower($serviceName))));
             if (!$result) {
                 msg($this->getLang('cannotAddLinkedEmail'), -1);
