@@ -316,10 +316,16 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             return false;
         }
 
+        if (!isset($uinfo['altEmails'])) {
+            $uinfo['altEmails'] = null;
+        }
+
         // see if the user is known already
         if ($addNew) {
             global $USERINFO;
-            $user = $this->getUserByEmail($uinfo['mail'], $serviceName);
+            $user = $this->getUserByEmail(
+                $uinfo['mail'], $serviceName, $uinfo['altEmails']
+            );
             // error_log('$user: ' . $user);
             if ($user) {
                 if ($user !== $_SESSION[DOKU_COOKIE]['auth']['user']) {
@@ -330,7 +336,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 return FALSE;
             }
             $sql = $this->getConf('add-linked-emails');
-            $mail = strtolower($uinfo['mail']);
+            $mail = $uinfo['mail'];
             // error_log(json_encode($USERINFO, JSON_PRETTY_PRINT));
             $result = $this->_query($sql, array_merge($USERINFO, array(':email' => $mail, ':service' => strtolower($serviceName))));
             if (!$result) {
@@ -341,7 +347,9 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             }
         } else {
             // regular login
-            $user = $this->getUserByEmail($uinfo['mail'], $serviceName);
+            $user = $this->getUserByEmail(
+                $uinfo['mail'], $serviceName, $uinfo['altEmails']
+            );
             if ($user) {
                 $sinfo = $this->getUserData($user);
                 $mergedGroups = array_merge((array) $uinfo['grps'], $sinfo['grps']);
@@ -385,7 +393,6 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         $uinfo['user'] = $user;
         $groups_on_creation = array();
         $groups_on_creation[] = $conf['defaultgroup'];
-        $groups_on_creation[] = $serviceName; // add service as group
         $uinfo['grps'] = array_merge((array) $uinfo['grps'], $groups_on_creation);
 
         $ok = $this->triggerUserMod(
@@ -407,24 +414,35 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      *
      * @param $mail
      * @param $service - the service the user is using
+     * @param $altEmails - the service the user is using
      * @return bool|string
      */
-    protected function getUserByEmail($mail, $serviceName = null) {
-        if ($serviceName) {
-            $sql = $this->getConf('select-user-from-email-with-service');
-            $mail = strtolower($mail);
-            $result = $this->_query($sql, array(':mail' => $mail, ':service' => strtolower($serviceName)));
-            if ($result) {
-                return $result[0]['user'];
-            }
-        } else {
-            $sql = $this->getConf('select-user-from-email');
-            $mail = strtolower($mail);
-            $result = $this->_query($sql, array(':mail' => $mail));
-            if ($result) {
-                return $result[0]['user'];
+    protected function getUserByEmail (
+        $mail, $serviceName = null, $altEmails = null
+    ) {
+        $emailList = array($mail);
+        if (is_array($altEmails)) {
+            $emailList = array_merge($emailList, $altEmails);
+        }
+
+        foreach($emailList as $emailEntry) {
+            if ($serviceName) {
+                $sql = $this->getConf('select-user-from-email-with-service');
+                $result = $this->_query($sql,
+                    array(':mail' => $emailEntry,
+                        ':service' => strtolower($serviceName)));
+                if ($result) {
+                    return $result[0]['user'];
+                }
+            } else {
+                $sql = $this->getConf('select-user-from-email');
+                $result = $this->_query($sql, array(':mail' => $emailEntry));
+                if ($result) {
+                    return $result[0]['user'];
+                }
             }
         }
+
         return false;
     }
 
@@ -501,13 +519,14 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      * @param null   $grps
      * @return bool|null|string
      */
-    public function createUser($user, $pwd, $name, $mail, $grps = null) {
-        if($this->getUserByEmail($mail)) {
+    public function createUser($user, $pwd, $name, $mail, $grps = null, $serviceName = null, $altEmails = null) {
+        if($this->getUserByEmail($mail, $serviceName, $altEmails)) {
             msg($this->getLang('emailduplicate'), -1);
             return false;
         }
+        $newUser = parent::createUser($user, $pwd, $name, $mail, $grps);
 
-        return parent::createUser($user, $pwd, $name, $mail, $grps);
+        // TODO: link email for the new user
     }
 
     public function getUserData ($user, $requireGroups = true) {

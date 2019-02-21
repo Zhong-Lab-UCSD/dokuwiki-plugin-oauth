@@ -22,6 +22,23 @@ class GoogleAdapter extends AbstractAdapter {
         $data['user'] = $result['name'];
         $data['name'] = $result['name'];
         $data['mail'] = $result['email'];
+        
+        // Additional info from Google People API: alternative emails
+        $data['altEmails'] = array();
+        
+        try {
+            $result = $JSON->decode($this->oAuth->request('https://people.googleapis.com/v1/people/me?personFields=emailAddresses'));
+            if (is_array($result['emailAddresses'])) {
+                foreach ($result['emailAddresses'] as $emailEntry) {
+                    if ($emailEntry['value'] !== $data['mail']) {
+                        $data['altEmails'] []= $emailEntry['value'];
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            error_log('Error connecting to Google People API: code may be obselete.\nException: ' .
+                $e->getMessage());
+        }
 
         return $data;
     }
@@ -32,7 +49,7 @@ class GoogleAdapter extends AbstractAdapter {
      * @return array
      */
     public function getScope() {
-        return array(Google::SCOPE_USERINFO_EMAIL, Google::SCOPE_USERINFO_PROFILE);
+        return array(Google::SCOPE_USERINFO_EMAIL, Google::SCOPE_USERINFO_PROFILE, Google::SCOPE_ALL_EMAILS);
     }
 
     public function login($forceNew = false) {
