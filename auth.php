@@ -531,19 +531,23 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
 
     public function getUserData ($user, $requireGroups = true) {
         $data = parent::getUserData($user, $requireGroups);
-        $sql = $this->getConf('get-user-linked-emails');
-        $linkedAccounts = array();
-        $result = $this->_query($sql, $data);
-        if ($result) {
-            foreach ($result as $row) {
-                if (!isset($linkedAccounts[strtolower($row['service'])])) {
-                    $linkedAccounts[strtolower($row['service'])] = [];
-                } 
-                $linkedAccounts[strtolower($row['service'])] []= $row['email'];
+        if ($data) {
+            // NOTE: when external edit is viewed, user's data will not be
+            // available.
+            $sql = $this->getConf('get-user-linked-emails');
+            $linkedAccounts = array();
+            $result = $this->_query($sql, $data);
+            if ($result) {
+                foreach ($result as $row) {
+                    if (!isset($linkedAccounts[strtolower($row['service'])])) {
+                        $linkedAccounts[strtolower($row['service'])] = [];
+                    } 
+                    $linkedAccounts[strtolower($row['service'])] []= $row['email'];
+                }
+                unset($row);
             }
-            unset($row);
+            $data['linkedAccounts'] = $linkedAccounts;
         }
-        $data['linkedAccounts'] = $linkedAccounts;
         return $data;
     }
 
