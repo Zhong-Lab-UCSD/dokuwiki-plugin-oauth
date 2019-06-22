@@ -78,6 +78,8 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
             if ($this->isSessionValid($session)) {
                 $_SERVER['REMOTE_USER'] = $session['user'];
                 $USERINFO               = $session['info'];
+                // update session time
+                $_SESSION[DOKU_COOKIE]['auth']['time'] = time();
                 $authenticated = TRUE;
             }
         }
