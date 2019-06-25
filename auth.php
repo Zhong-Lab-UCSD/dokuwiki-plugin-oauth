@@ -483,6 +483,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
      * @param int    $validityPeriodInSeconds optional, per default 1 Year
      */
     private function setUserCookie($user, $sticky, $serviceName, $validityPeriodInSeconds = 31536000) {
+        global $conf;
         $cookie = base64_encode($user).'|'.((int) $sticky).'|'.base64_encode('oauthpdo').'|'.base64_encode($serviceName);
         $cookieDir = empty($conf['cookiedir']) ? DOKU_REL : $conf['cookiedir'];
         $time      = $sticky ? (time() + $validityPeriodInSeconds) : 0;
