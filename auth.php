@@ -486,7 +486,11 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         $cookie = base64_encode($user).'|'.((int) $sticky).'|'.base64_encode('oauthpdo').'|'.base64_encode($serviceName);
         $cookieDir = empty($conf['cookiedir']) ? DOKU_REL : $conf['cookiedir'];
         $time      = $sticky ? (time() + $validityPeriodInSeconds) : 0;
-        setcookie(DOKU_COOKIE,$cookie, $time, $cookieDir, '',($conf['securecookie'] && is_ssl()), true);
+        setcookie(DOKU_COOKIE,$cookie, $time, $cookieDir, $conf['cookiedomain'], ($conf['securecookie'] && is_ssl()), true);
+        if ($validityPeriodInSeconds < 0) {
+            // clear out potential previous cookie as well
+            setcookie(DOKU_COOKIE, $cookie, $time, $cookieDir, '', ($conf['securecookie'] && is_ssl()), true);
+        }
     }
 
     /**
