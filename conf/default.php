@@ -56,6 +56,18 @@ $conf['select-user'] = '';
  */
 $conf['select-user-from-email-with-service'] = '';
 /**
+ * statement to update the last login timestamp when using user name
+ *
+ * input: :user
+ */
+$conf['update-login-time'] = '';
+/**
+ * statement to update the last login timestamp when using oauth
+ *
+ * input: :uid, :mail, :service
+ */
+$conf['update-login-time-oauth'] = '';
+/**
  * statement to select a single user identified by email
  *
  * input: :mail

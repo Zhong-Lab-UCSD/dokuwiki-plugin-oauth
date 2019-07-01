@@ -78,6 +78,8 @@ $meta['select-user-from-email']                 = array('', '_caution' => 'dange
 $meta['get-user-linked-emails']                 = array('', '_caution' => 'danger');
 $meta['add-linked-emails']                      = array('', '_caution' => 'danger');
 $meta['remove-linked-emails']                   = array('', '_caution' => 'danger');
+$meta['update-login-time']                      = array('', '_caution' => 'danger');
+$meta['update-login-time-oauth']                = array('', '_caution' => 'danger');
 $meta['check-pass']         = array('', '_caution' => 'danger');
 $meta['select-user-groups'] = array('', '_caution' => 'danger');
 $meta['select-groups']      = array('', '_caution' => 'danger');

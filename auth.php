@@ -149,10 +149,30 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         }
 
         if ($authenticated) {
+            // If authenticated, update last login time
+            if (!$session['oauthpdo']) {
+                $this->updateLoginTime($user);
+            }
             return $this->oauthAddRemove();
         }
 
         return $authenticated;
+    }
+
+    protected function updateLoginTime ($user) {
+        $sql = $this->getConf('update-login-time');
+        if ($sql) {
+            $this->_query($sql, array(':user' => $user));
+        }
+    }
+
+    protected function updateLoginTimeOauth ($uid, $email, $service) {
+        $sql = $this->getConf('update-login-time-oauth');
+        if ($sql) {
+            $this->_query($sql, array(
+                ':uid' => $uid, ':mail' => $email, ':service' => $service
+            ));
+        }
     }
 
     protected function oauthAddRemove () {
@@ -412,11 +432,11 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
     }
 
     /**
-     * Find a user by his email address
+     * Find a user by their email address
      *
      * @param $mail
      * @param $service - the service the user is using
-     * @param $altEmails - the service the user is using
+     * @param $altEmails - the alternative emails from the oauth service.
      * @return bool|string
      */
     protected function getUserByEmail (
@@ -434,6 +454,11 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                     array(':mail' => $emailEntry,
                         ':service' => strtolower($serviceName)));
                 if ($result) {
+                    $this->updateLoginTimeOauth(
+                        $result[0]['uid'],
+                        $emailEntry,
+                        $serviceName
+                    );
                     return $result[0]['user'];
                 }
             } else {
