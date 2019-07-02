@@ -64,7 +64,7 @@ $conf['update-login-time'] = '';
 /**
  * statement to update the last login timestamp when using oauth
  *
- * input: :uid, :mail, :service
+ * input: :uid, :email, :service
  */
 $conf['update-login-time-oauth'] = '';
 /**
@@ -77,20 +77,20 @@ $conf['select-user-from-email'] = '';
 /**
  * statement to select all linked emails of the user
  *
- * input: :user, [uid]
+ * input: :user, [:uid]
  * return: service, email
  */
 $conf['get-user-linked-emails'] = '';
 /**
  * statement to link a new email account for the user
  *
- * input: :user, [uid], service, email
+ * input: :user, [:uid], :service, :email
  */
 $conf['add-linked-emails'] = '';
 /**
  * statement to remove a linked email account for the user
  *
- * input: :user, [uid], service, email
+ * input: :user, [:uid], :service, :email
  */
 $conf['remove-linked-emails'] = '';
 /**

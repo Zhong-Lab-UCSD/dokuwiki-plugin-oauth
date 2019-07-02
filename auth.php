@@ -170,7 +170,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
         $sql = $this->getConf('update-login-time-oauth');
         if ($sql) {
             $this->_query($sql, array(
-                ':uid' => $uid, ':mail' => $email, ':service' => $service
+                ':uid' => $uid, ':email' => $email, ':service' => $service
             ));
         }
     }
