@@ -457,7 +457,7 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                     $this->updateLoginTimeOauth(
                         $result[0]['uid'],
                         $emailEntry,
-                        $serviceName
+                        strtolower($serviceName)
                     );
                     return $result[0]['user'];
                 }
