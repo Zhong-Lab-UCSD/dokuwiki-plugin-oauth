@@ -108,28 +108,26 @@ class auth_plugin_oauthpdo extends auth_plugin_authpdo {
                 if(is_null($service)) {
                     $this->cleanLogout();
                     $authenticated = FALSE;
-                }
-
-                if($service->checkToken()) {
-                    $ok = $this->processLogin($sticky, $service, $serviceName, $page, $params, $addNewLogin);
-                    if (!$ok) {
-                        $this->cleanLogout();
-                        $authenticated = false;
-                    }
-                    $authenticated = true;
                 } else {
-                    if ($existingLoginProcess) {
-                        msg($this->getLang('oauthpdo login failed'),0);
-                        $this->cleanLogout();
-                        $authenticated = false;
+                    if($service->checkToken()) {
+                        $ok = $this->processLogin($sticky, $service, $serviceName, $page, $params, $addNewLogin);
+                        if (!$ok) {
+                            $this->cleanLogout();
+                            $authenticated = false;
+                        } else {
+                            $authenticated = true;
+                        }
                     } else {
-                        // first time here
-                        return $this->relogin($serviceName);
+                        if ($existingLoginProcess) {
+                            msg($this->getLang('oauthpdo login failed'),0);
+                            $this->cleanLogout();
+                            $authenticated = false;
+                        } else {
+                            // first time here
+                            return $this->relogin($serviceName);
+                        }
                     }
                 }
-
-                $this->cleanLogout();
-                $authenticated = false; // something went wrong during oAuth login
             } elseif (isset($_COOKIE[DOKU_COOKIE])) {
                 global $INPUT;
                 //try cookie
